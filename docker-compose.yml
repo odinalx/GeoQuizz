@@ -11,6 +11,10 @@ services:
       - directus_db
     networks:
       - geoquizz-network
+    labels:
+      - "geoquizz.description=Backoffice & gestion du contenu"
+      - "geoquizz.url=http://localhost:8055"
+      - "geoquizz.credentials=Email: admin@example.com, Password: directus123"
 
   directus_db:
     image: postgres:latest
@@ -23,53 +27,56 @@ services:
     networks:
       - geoquizz-network
 
-  auth_service:
-    build: ./back/auth_service
-    container_name: auth_service
-    restart: always
-    ports:
-      - "8081:80"
-    env_file:
-      - ./back/auth_service/.env
-    depends_on:
-      - auth_db
-    networks:
-      - geoquizz-network
+  #auth_service:
+  #  build: ./back/auth_service
+  #  container_name: auth_service
+  #  restart: always
+  #  ports:
+  #    - "8081:80"
+  #  env_file:
+  #    - ./back/auth_service/.env
+  #  depends_on:
+  #    - auth_db
+  #  networks:
+  #    - geoquizz-network
+  #  labels:
+  #    - "geoquizz.description=Service d'authentification"
+  #    - "geoquizz.url=http://localhost:8081"
 
-  auth_db:
-    image: mysql:latest
-    container_name: auth_db
-    restart: always
-    env_file:
-      - ./back/auth_service/db.env
-    volumes:
-      - auth_data:/var/lib/mysql
-    networks:
-      - geoquizz-network
+  # auth_db:
+  #   image: mysql:latest
+  #   container_name: auth_db
+  #   restart: always
+  #   env_file:
+  #   - ./back/auth_service/db.env
+  # volumes:
+  #   - auth_data:/var/lib/mysql
+  #  networks:
+  #    - geoquizz-network
 
-  game_service:
-    build: ./back/game_service
-    container_name: game_service
-    restart: always
-    ports:
-      - "8082:80"
-    env_file:
-      - ./back/game_service/.env
-    depends_on:
-      - game_db
-    networks:
-      - geoquizz-network
+  # game_service:
+  #   build: ./back/game_service
+  #   container_name: game_service
+  #   restart: always
+  #   ports:
+  #     - "8082:80"
+  #   env_file:
+  #     - ./back/game_service/.env
+  #   depends_on:
+  #     - game_db
+  #   networks:
+  #     - geoquizz-network
 
-  game_db:
-    image: mysql:latest
-    container_name: game_db
-    restart: always
-    env_file:
-      - ./back/game_service/db.env
-    volumes:
-      - game_data:/var/lib/mysql
-    networks:
-      - geoquizz-network
+  # game_db:
+  #   image: mysql:latest
+  #   container_name: game_db
+  #   restart: always
+  #   env_file:
+  #     - ./back/game_service/db.env
+  #   volumes:
+  #     - game_data:/var/lib/mysql
+  #   networks:
+  #     - geoquizz-network
 
   frontend:
     build: ./front
@@ -78,17 +85,25 @@ services:
     ports:
       - "5173:5173"
     depends_on:
-      - auth_service
-      - game_service
       - directus
+      # - auth_service
+      # - game_service
     networks:
       - geoquizz-network
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+    labels:
+      - "geoquizz.description=Interface utilisateur du jeu"
+      - "geoquizz.url=http://localhost:5173"
 
 networks:
   geoquizz-network:
     driver: bridge
+    labels:
+      - "geoquizz.project=true"
 
 volumes:
   directus_data:
-  auth_data:
-  game_data:
+  # auth_data:
+  # game_data:
