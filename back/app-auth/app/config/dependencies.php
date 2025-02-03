@@ -1,14 +1,13 @@
 <?php
-use toubeelib\core\services\auth\ServiceAuth;
+use geoquizz\core\services\auth\ServiceAuth;
 use Psr\Container\ContainerInterface;
-use toubeelib\core\services\auth\ServiceAuthInterface;
-use toubeelib\core\repositoryInterfaces\AuthRepositoryInterface;
-use toubeelib\infrastructure\PDO\PdoAuthRepository;
+use geoquizz\core\services\auth\ServiceAuthInterface;
+use geoquizz\core\repositoryInterfaces\AuthRepositoryInterface;
+use geoquizz\infrastructure\PDO\PdoAuthRepository;
 use app\providers\JWTManager;
 return [
     
     'auth.pdo' => function (ContainerInterface $container) {
-        // $config = parse_ini_file(__DIR__ . '/auth.db.ini');
         $configPath = $container->get('auth.db.config'); // Récupère le chemin défini dans settings.php
         $config = parse_ini_file($configPath);
         $dsn = "{$config['driver']}:host={$config['host']};dbname={$config['database']}";

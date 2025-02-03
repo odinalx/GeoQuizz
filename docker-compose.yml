@@ -1,88 +1,98 @@
 services:
-  directus:
-    image: directus/directus:latest
-    container_name: directus
-    restart: always
+  
+  api.auth:
+    build: ./back/app-auth/app
+    container_name: api-auth-geoquizz
     ports:
-      - "8055:8055"
+      - "33550:80"
     env_file:
-      - ./back/directus/.env
+      - ./back/app-auth/auth.env
     depends_on:
-      - directus_db
+      - auth.db
     networks:
       - geoquizz-network
 
-  directus_db:
+  auth.db:
     image: postgres:latest
-    container_name: directus_db
-    restart: always
-    env_file:
-      - ./back/directus/db.env
-    volumes:
-      - directus_data:/var/lib/postgresql/data
-    networks:
-      - geoquizz-network
-
-  auth_service:
-    build: ./back/auth_service
-    container_name: auth_service
-    restart: always
+    container_name: db-auth-geoquizz
     ports:
-      - "8081:80"
+      - '33551:5432'
     env_file:
-      - ./back/auth_service/.env
-    depends_on:
-      - auth_db
-    networks:
-      - geoquizz-network
-
-  auth_db:
-    image: mysql:latest
-    container_name: auth_db
-    restart: always
-    env_file:
-      - ./back/auth_service/db.env
+      - ./back/app-auth/auth.env
     volumes:
-      - auth_data:/var/lib/mysql
+      - ./back/app-auth/data:/var/lib/postgresql/data
+      - ./back/app-auth/sql/:/docker-entrypoint-initdb.d
     networks:
       - geoquizz-network
 
-  game_service:
-    build: ./back/game_service
-    container_name: game_service
-    restart: always
+  adminer:
+    image: adminer
+    container_name: adminer-geoquizz
     ports:
-      - "8082:80"
-    env_file:
-      - ./back/game_service/.env
-    depends_on:
-      - game_db
+      - '8080:8080'
     networks:
       - geoquizz-network
 
-  game_db:
-    image: mysql:latest
-    container_name: game_db
-    restart: always
-    env_file:
-      - ./back/game_service/db.env
-    volumes:
-      - game_data:/var/lib/mysql
-    networks:
-      - geoquizz-network
+  # directus:
+  #   image: directus/directus:latest
+  #   container_name: directus
+  #   restart: always
+  #   ports:
+  #     - "8055:8055"
+  #   env_file:
+  #     - ./back/directus/.env
+  #   depends_on:
+  #     - directus_db
+  #   networks:
+  #     - geoquizz-network
 
-  frontend:
-    build: ./front/vuejs
-    container_name: geoquizz_frontend
-    restart: always
-    ports:
-      - "5173:5173"
-    depends_on:
-      - auth_service
-      - game_service
-      - directus
-    networks:
-      - geoquizz-network
+  # directus_db:
+  #   image: postgres:latest
+  #   container_name: directus_db
+  #   restart: always
+  #   env_file:
+  #     - ./back/directus/db.env
+  #   volumes:
+  #     - directus_data:/var/lib/postgresql/data
+  #   networks:
+  #     - geoquizz-network
+
+  # game_service:
+  #   build: ./back/game_service
+  #   container_name: game_service
+  #   restart: always
+  #   ports:
+  #     - "8082:80"
+  #   env_file:
+  #     - ./back/game_service/.env
+  #   depends_on:
+  #     - game_db
+  #   networks:
+  #     - geoquizz-network
+
+  # game_db:
+  #   image: mysql:latest
+  #   container_name: game_db
+  #   restart: always
+  #   env_file:
+  #     - ./back/game_service/db.env
+  #   volumes:
+  #     - game_data:/var/lib/mysql
+  #   networks:
+  #     - geoquizz-network
+
+  # frontend:
+  #   build: ./front/vuejs
+  #   container_name: geoquizz_frontend
+  #   restart: always
+  #   ports:
+  #     - "5173:5173"
+  #   depends_on:
+  #     - auth_service
+  #     - game_service
+  #     - directus
+  #   networks:
+  #     - geoquizz-network
 
 networks:
   geoquizz-network:
@@ -90,5 +100,4 @@ networks:
 
 volumes:
   directus_data:
-  auth_data:
   game_data:
