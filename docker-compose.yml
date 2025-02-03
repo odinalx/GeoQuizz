@@ -72,7 +72,7 @@ services:
       - geoquizz-network
 
   frontend:
-    build: ./front/vuejs
+    build: ./front
     container_name: geoquizz_frontend
     restart: always
     ports:
