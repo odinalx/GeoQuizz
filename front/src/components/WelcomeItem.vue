@@ -1,10 +1,10 @@
 <template>
-  <div class="item">
-    <i>
+  <div class="flex items-start mt-8 first:mt-0">
+    <i class="flex items-center justify-center w-8 h-8 text-gray-700">
       <slot name="icon"></slot>
     </i>
-    <div class="details">
-      <h3>
+    <div class="ml-4 flex-1">
+      <h3 class="text-lg font-medium text-gray-900 mb-2">
         <slot name="heading"></slot>
       </h3>
       <slot></slot>

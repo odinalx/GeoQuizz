@@ -31,9 +31,25 @@ services:
     ports:
       - '8080:8080'
     networks:
-      - geoquizz-network
+      - geoquizz-network 
 
-  # directus:
+  frontend:
+    build: ./front
+    container_name: geoquizz_frontend
+    restart: always
+    ports:
+      - "33555:5173"
+    depends_on:
+      - directus
+      # - auth_service
+      # - game_service
+    networks:
+      - geoquizz-network
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+      
+     # directus:
   #   image: directus/directus:latest
   #   container_name: directus
   #   restart: always
@@ -78,19 +94,6 @@ services:
   #     - ./back/game_service/db.env
   #   volumes:
   #     - game_data:/var/lib/mysql
-  #   networks:
-  #     - geoquizz-network
-
-  # frontend:
-  #   build: ./front/vuejs
-  #   container_name: geoquizz_frontend
-  #   restart: always
-  #   ports:
-  #     - "5173:5173"
-  #   depends_on:
-  #     - auth_service
-  #     - game_service
-  #     - directus
   #   networks:
   #     - geoquizz-network
 

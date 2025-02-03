@@ -4,58 +4,45 @@ import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <div class="min-h-screen bg-gray-100">
+    <header class="bg-white shadow">
+      <div class="max-w-7xl mx-auto py-6 px-4">
+        <img 
+          alt="Vue logo" 
+          class="h-32 w-auto mx-auto" 
+          src="@/assets/logo.svg"
+        />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+        <div class="mt-6">
+          <HelloWorld msg="You did it!" />
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
+          <nav class="mt-4 space-x-4 text-center">
+            <RouterLink 
+              class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+              :class="{ 'bg-gray-100': $route.name === 'home' }"
+              to="/"
+            >
+              Home
+            </RouterLink>
+            <RouterLink 
+              class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+              :class="{ 'bg-gray-100': $route.name === 'about' }"
+              to="/about"
+            >
+              About
+            </RouterLink>
+          </nav>
+        </div>
+      </div>
+    </header>
 
-  <RouterView />
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <RouterView />
+    </main>
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
+<style>
 @media (min-width: 1024px) {
   header {
     display: flex;
@@ -77,9 +64,12 @@ nav a:first-of-type {
     text-align: left;
     margin-left: -1rem;
     font-size: 1rem;
-
     padding: 1rem 0;
     margin-top: 1rem;
+  }
+
+  nav a:first-of-type {
+    border: 0;
   }
 }
 </style>
