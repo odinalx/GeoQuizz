@@ -11,16 +11,16 @@ use geoquizz\infrastructure\PDO\RepositoryNotFoundException;
 
 class PdoGameRepository implements GameRepositoryInterface {
 
-    private PDO $pdo_rdv;
+    private PDO $pdo;
     
-    public function __construct(PDO $pdo_rdv)
+    public function __construct(PDO $pdo)
     {
-        $this->pdo_rdv = $pdo_rdv;
+        $this->pdo = $pdo;
     }
 
     public function save(Game $game): GameDTO {
         try {
-            $stmt = $this->pdo_rdv->prepare('INSERT INTO games (id, creator_id, serie_id, status, score, created_at ) VALUES (:id, :creator_id, :serie_id, :status, :score, :created_at)');
+            $stmt = $this->pdo->prepare('INSERT INTO games (id, creator_id, serie_id, status, score, created_at ) VALUES (:id, :creator_id, :serie_id, :status, :score, :created_at)');
             $stmt->execute([
                 'id' => $game->getID(),
                 'creator_id' => $game->creatorId,
@@ -38,7 +38,7 @@ class PdoGameRepository implements GameRepositoryInterface {
 
     public function getGame(string $id): GameDTO {
         try {
-            $stmt = $this->pdo_rdv->prepare('SELECT * FROM games WHERE id = :id');
+            $stmt = $this->pdo->prepare('SELECT * FROM games WHERE id = :id');
             $stmt->execute(['id' => $id]);
             $game = $stmt->fetch();
             if ($game) {
@@ -55,5 +55,36 @@ class PdoGameRepository implements GameRepositoryInterface {
             throw new RepositoryNotFoundException("Impossible de récupérer la partie : " . $e->getMessage());
         }
     }
+
+    public function startGame(string $id): GameDTO
+{
+    try {
+        $stmt = $this->pdo->prepare('SELECT status FROM games WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+        $game = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$game) {
+            throw new RepositoryNotFoundException("Partie introuvable.");
+        }
+
+        if ($game['status'] === Game::STATUS_STARTED) {
+            throw new StatusException("La partie a déjà été démarrée.");
+        }
+        if ($game['status'] === Game::STATUS_FINISHED) {
+            throw new StatusException("La partie est déjà terminée.");
+        }
+
+        $stmt = $this->pdo->prepare('UPDATE games SET status = :status WHERE id = :id');
+        $stmt->execute([
+            'id' => $id,
+            'status' => Game::STATUS_STARTED
+        ]);
+
+        return $this->getGame($id);
+    } catch (PDOException $e) {
+        throw new RepositoryNotFoundException("Impossible de démarrer la partie : " . $e->getMessage());
+    }
+}
+
 
 }

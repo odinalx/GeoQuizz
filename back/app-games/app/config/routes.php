@@ -6,6 +6,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use geoquizz\application\actions\HomeAction;
 use geoquizz\application\actions\CreateGameAction;
 use geoquizz\application\actions\GetGameAction;
+use geoquizz\application\actions\StartGameAction;
 
 return function(App $app): App {
 
@@ -14,7 +15,8 @@ return function(App $app): App {
 
 
     $app->post('/games', CreateGameAction::class)->setName('createGame');
-    $app->get('/games/{id}', GetGameAction::class)->setName('GetGame');
+    $app->get('/games/{id}', GetGameAction::class)->setName('getGame');
+    $app->patch('/games/{id}/start', StartGameAction::class)->setName('startGame');
                                                             
     $app->options('/{routes:.+}', function (Request $request, Response $response) {
         return $response;

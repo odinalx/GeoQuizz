@@ -7,9 +7,9 @@ use Ramsey\Uuid\Guid\Guid;
 
 class Game extends Entity {
 
-    private const STATUS_CREATED = "CREATED";
-    private const STATUS_STARTED = "STARTED";
-    private const STATUS_FINISHED = "FINISHED";
+    const STATUS_CREATED = "CREATED";
+    const STATUS_STARTED = "STARTED";
+    const STATUS_FINISHED = "FINISHED";
 
     protected string $creatorId;
     protected string $serieId;
