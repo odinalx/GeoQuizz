@@ -9,9 +9,11 @@ use Slim\Exception\HttpNotFoundException;
 class GenericAction extends AbstractAction
 {
     private ClientInterface $authClient;
+    private ClientInterface $gameClient;
 
-    public function __construct(ClientInterface $authClient) {
+    public function __construct(ClientInterface $authClient, ClientInterface $gameClient) {
         $this->authClient = $authClient;
+        $this->gameClient = $gameClient;
     }
 
     public function __invoke(ServerRequestInterface $rq, ResponseInterface $rs, array $args): ResponseInterface {
@@ -22,6 +24,8 @@ class GenericAction extends AbstractAction
         //on détermine le client à utiliser en fonction du path
         if (strpos($path, '/auth') === 0) {
             $client = $this->authClient; // Ajouter les routes /auth uniquement pour le frontend
+        } else if(strpos($path, '/games') === 0) {
+            $client = $this->gameClient;
         } else {
             throw new HttpNotFoundException($rq, 'Route not found');
         }

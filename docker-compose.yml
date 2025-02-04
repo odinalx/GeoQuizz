@@ -13,6 +13,8 @@ services:
   api.auth:
     build: ./back/app-auth/app
     container_name: api-auth-geoquizz
+    volumes:
+      - ./back/app-auth/app:/var/app
     ports:
       - "33550:80"
     depends_on:
@@ -103,30 +105,6 @@ services:
   #     - ./back/directus/db.env
   #   volumes:
   #     - directus_data:/var/lib/postgresql/data
-  #   networks:
-  #     - geoquizz-network
-
-  # game_service:
-  #   build: ./back/game_service
-  #   container_name: game_service
-  #   restart: always
-  #   ports:
-  #     - "8082:80"
-  #   env_file:
-  #     - ./back/game_service/.env
-  #   depends_on:
-  #     - game_db
-  #   networks:
-  #     - geoquizz-network
-
-  # game_db:
-  #   image: mysql:latest
-  #   container_name: game_db
-  #   restart: always
-  #   env_file:
-  #     - ./back/game_service/db.env
-  #   volumes:
-  #     - game_data:/var/lib/mysql
   #   networks:
   #     - geoquizz-network
 

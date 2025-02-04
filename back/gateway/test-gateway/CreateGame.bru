@@ -1,0 +1,22 @@
+meta {
+  name: CreateGame
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://gateway.geoquizz:33554/games
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6ImRlZmF1bHQta2V5LWlkIn0.eyJzdWIiOiI3M2IzZDg0Zi1jOGIwLTRiZjUtOTRiYi04ZjAxYzYwMWM3MTMiLCJyb2xlIjoxNSwiZW1haWwiOiJ2aWN0b3JAdGVzdC5jb20iLCJleHAiOjE3Mzg2ODEwNDF9.lwLjP49rzHZmNILdaN0uqOzs1bAaIFeFi-iwvCSVFV56w7ZLj8v3bgaDTKAx5vDVLh1WxXTlDzGsiRvpGVQ1mw
+}
+
+body:json {
+  {
+    "creatorId": "b94fb564-fec0-43e1-b87f-0a91f441e7bd",
+    "serieId" : "b51aa681-af69-4c4b-b902-400725071f61"
+  }
+}
