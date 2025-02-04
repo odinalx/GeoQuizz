@@ -1,0 +1,19 @@
+meta {
+  name: register
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://gateway.geoquizz:33554/auth/register
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "odin@test.com",
+    "password": "root",
+    "role": "15"
+  }
+}
