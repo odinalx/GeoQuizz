@@ -62,7 +62,11 @@ services:
     networks:
       - geoquizz-network
     volumes:
-    - ./directus_uploads:/directus/uploads 
+    - ./directus_uploads:/directus/uploads
+    - ./database:/directus/database
+    - ./uploads:/directus/uploads
+    - ./extensions:/directus/extensions
+    - ./templates:/directus/templates
   directus_db:
     image: postgres:latest
     container_name: directus_db
