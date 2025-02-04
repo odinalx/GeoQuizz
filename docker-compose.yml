@@ -1,4 +1,14 @@
 services:
+
+  gateway.geoquizz:
+      build: ./back/gateway/app
+      container_name: gateway-geoquizz
+      volumes:
+        - ./back/gateway/app:/var/app
+      ports:
+        - '33554:80'
+      networks:
+        - geoquizz-network
   
   api.auth:
     build: ./back/app-auth/app
@@ -33,21 +43,21 @@ services:
     networks:
       - geoquizz-network 
 
-  frontend:
-    build: ./front
-    container_name: geoquizz_frontend
-    restart: always
-    ports:
-      - "33555:5173"
-    depends_on:
-      - directus
-      # - auth_service
-      # - game_service
-    networks:
-      - geoquizz-network
-    volumes:
-      - ./front:/app
-      - /app/node_modules
+  # frontend:
+  #   build: ./front
+  #   container_name: geoquizz_frontend
+  #   restart: always
+  #   ports:
+  #     - "33555:5173"
+  #   depends_on:
+  #     - directus
+  #     # - auth_service
+  #     # - game_service
+  #   networks:
+  #     - geoquizz-network
+  #   volumes:
+  #     - ./front:/app
+  #     - /app/node_modules
       
      # directus:
   #   image: directus/directus:latest
