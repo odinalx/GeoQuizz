@@ -15,8 +15,6 @@ services:
     container_name: api-auth-geoquizz
     ports:
       - "33550:80"
-    env_file:
-      - ./back/app-auth/auth.env
     depends_on:
       - auth.db
     networks:
@@ -32,6 +30,31 @@ services:
     volumes:
       - ./back/app-auth/data:/var/lib/postgresql/data
       - ./back/app-auth/sql/:/docker-entrypoint-initdb.d
+    networks:
+      - geoquizz-network
+  
+  api.games:
+    build: ./back/app-games/app
+    container_name: api-games-geoquizz
+    volumes:
+      - ./back/app-games/app:/var/app
+    ports:
+      - "33552:80"
+    depends_on:
+      - games.db
+    networks:
+      - geoquizz-network
+  
+  games.db :
+    image: postgres:latest
+    container_name: db-games-geoquizz
+    ports:
+      - '33553:5432'
+    env_file:
+      - ./back/app-games/game.env
+    volumes:
+      - ./back/app-games/data:/var/lib/postgresql/data
+      - ./back/app-games/sql/:/docker-entrypoint-initdb.d
     networks:
       - geoquizz-network
 
