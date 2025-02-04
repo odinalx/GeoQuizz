@@ -48,6 +48,7 @@ services:
     volumes:
       - ./front:/app
       - /app/node_modules
+      - directus_uploads:/app/public/uploads
   directus:
     image: directus/directus:latest
     container_name: directus
@@ -60,7 +61,8 @@ services:
       - directus_db
     networks:
       - geoquizz-network
-
+    volumes:
+    - ./directus_uploads:/directus/uploads 
   directus_db:
     image: postgres:latest
     container_name: directus_db
@@ -103,3 +105,4 @@ networks:
 volumes:
   directus_data:
   game_data:
+  directus_files: 
