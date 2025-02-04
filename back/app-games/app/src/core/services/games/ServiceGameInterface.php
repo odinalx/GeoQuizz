@@ -7,4 +7,5 @@ use geoquizz\core\dto\GameDTO;
 interface ServiceGameInterface
 {
     public function createGame(InputGameDTO $g): GameDTO;
+    public function getGame(string $id): GameDTO;
 }

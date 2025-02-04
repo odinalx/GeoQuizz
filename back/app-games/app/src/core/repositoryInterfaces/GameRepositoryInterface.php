@@ -8,4 +8,5 @@ use geoquizz\core\dto\GameDTO;
 interface GameRepositoryInterface
 {   
     public function save(Game $game): GameDTO;
+    public function getGame(string $id): GameDTO;
 }

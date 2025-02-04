@@ -8,6 +8,7 @@ use geoquizz\core\dto\GameDTO;
 use geoquizz\core\repositoryInterfaces\GameRepositoryInterface;
 use geoquizz\core\services\games\ServiceCreationErrorException;
 use geoquizz\infrastructure\PDO\RepositoryCreationErrorException;
+use geoquizz\infrastructure\PDO\RepositoryNotFoundException;
 
 class ServiceGame implements ServiceGameInterface
 {
@@ -27,5 +28,14 @@ class ServiceGame implements ServiceGameInterface
             throw new ServiceCreationErrorException($e->getMessage());
         }
         
+    }
+
+    public function getGame(string $id): GameDTO
+    {   
+        try{
+            return $this->gameRepository->getGame($id);
+        } catch (RepositoryNotFoundException $e) {
+            throw new ServiceNotFoundException($e->getMessage());
+        }
     }
 }

@@ -7,6 +7,7 @@ use geoquizz\core\repositoryInterfaces\GameRepositoryInterface;
 use geoquizz\core\domain\entities\games\Game;
 use geoquizz\core\dto\GameDTO;
 use geoquizz\infrastructure\PDO\RepositoryCreationErrorException;
+use geoquizz\infrastructure\PDO\RepositoryNotFoundException;
 
 class PdoGameRepository implements GameRepositoryInterface {
 
@@ -32,6 +33,26 @@ class PdoGameRepository implements GameRepositoryInterface {
             return new GameDTO($game);
         } catch (PDOException $e) {
             throw new RepositoryCreationErrorException("Impossible de créer une partie : " . $e->getMessage());
+        }
+    }
+
+    public function getGame(string $id): GameDTO {
+        try {
+            $stmt = $this->pdo_rdv->prepare('SELECT * FROM games WHERE id = :id');
+            $stmt->execute(['id' => $id]);
+            $game = $stmt->fetch();
+            if ($game) {
+                $newgame = new Game($game['creator_id'], $game['serie_id']);
+                $newgame->setID($game['id']);
+                $newgame->setStatus($game['status']);
+                $newgame->setScore($game['score']);
+                $newgame->setCreatedAt(new \DateTimeImmutable($game['created_at']));
+                return new GameDTO($newgame);
+            } else {
+                return null;
+            }
+        } catch (PDOException $e) {
+            throw new RepositoryNotFoundException("Impossible de récupérer la partie : " . $e->getMessage());
         }
     }
 

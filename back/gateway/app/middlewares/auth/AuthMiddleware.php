@@ -41,7 +41,7 @@ class AuthMiddleware implements MiddlewareInterface
 
         } catch (\Exception $e) {
             $response = new Response();
-            $response->getBody()->write(json_encode(['error' => 'Token invalide ou expiré']));
+            $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
             return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
         }
     }

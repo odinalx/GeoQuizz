@@ -1,0 +1,18 @@
+meta {
+  name: GetGame
+  type: http
+  seq: 3
+}
+
+get {
+  url: http://api.games:33552/games/904d0e2d-c079-4cbc-9feb-46ab577e01ee
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "creatorId": "b94fb564-fec0-43e1-b87f-0a91f441e7bd",
+    "serieId" : "b51aa681-af69-4c4b-b902-400725071f61"
+  }
+}
