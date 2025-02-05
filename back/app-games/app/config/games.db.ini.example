@@ -1,7 +1,7 @@
 driver=pgsql
-host=<database>.db
+host=games.db
 username=
 password=
-database=<database>
+database=gamesdb
 charset=utf8
 collation=utf8_unicode_ci
