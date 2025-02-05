@@ -2,12 +2,14 @@
 
 namespace app\middlewares\auth;
 
-use Slim\Psr7\Response;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\RequestException;
 use Slim\Exception\HttpUnauthorizedException;
+use Slim\Exception\HttpBadRequestException;
+use Slim\Psr7\Response;
 
 class AuthMiddleware implements MiddlewareInterface
 {
@@ -20,10 +22,9 @@ class AuthMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): Response {
         $authHeader = $request->getHeaderLine('Authorization');
 
+        // Vérifie si le token est manquant ou mal formé
         if (!$authHeader || !preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
-            $response = new Response();
-            $response->getBody()->write(json_encode(['error' => 'Token manquant']));
-            return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
+            throw new HttpUnauthorizedException($request, 'Token manquant ou invalide');
         }
 
         $token = $matches[1];
@@ -33,16 +34,18 @@ class AuthMiddleware implements MiddlewareInterface
                 'headers' => ['Authorization' => "Bearer $token"]
             ]);
 
-            if ($authResponse->getStatusCode() !== 200) {
-                throw new HttpUnauthorizedException($request, 'Token invalide ou expiré');
-            }
-
             return $handler->handle($request);
 
-        } catch (\Exception $e) {
-            $response = new Response();
-            $response->getBody()->write(json_encode(['error' => $e->getMessage()]));
-            return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
+        } catch (RequestException $e) {
+            $statusCode = $e->getResponse() ? $e->getResponse()->getStatusCode() : 500;
+
+            if ($statusCode === 400) {
+                throw new HttpBadRequestException($request, 'Requête invalide vers le service d\'authentification');
+            } elseif ($statusCode === 401) {
+                throw new HttpUnauthorizedException($request, 'Token invalide ou expiré');
+            } else {
+                throw new \RuntimeException('Erreur lors de la validation du token');
+            }
         }
     }
 }

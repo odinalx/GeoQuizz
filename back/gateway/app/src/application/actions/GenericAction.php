@@ -62,9 +62,9 @@ class GenericAction extends AbstractAction
             case 400:
                 return $this->respondWithError($rs, "Requête invalide : $errorMessage", 400);
             case 401:
-                return $this->respondWithError($rs, "Accès non autorisé.", 401);
+                return $this->respondWithError($rs, "Accès non autorisé : $errorMessage", 401);
             case 403:
-                return $this->respondWithError($rs, "Accès interdit.", 403);
+                return $this->respondWithError($rs, "Accès interdit : $errorMessage", 403);
             case 404:
                 return $this->respondWithError($rs, "Ressource non trouvée : $errorMessage" , 404);
             case 409:
