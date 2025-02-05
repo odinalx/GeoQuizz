@@ -20,10 +20,18 @@ return [
         ]);
     },
 
+    'directusClient' => function () {
+        return new Client([
+            'base_uri' => 'http://api.directus:8055/',
+            'timeout'  => 1000.0,
+        ]);
+    },
+
     GenericAction::class => function(ContainerInterface $container) {
         $authClient = $container->get('authClient');
         $gameClient = $container->get('gameClient');
-        return new GenericAction($authClient, $gameClient);
+        $directusClient = $container->get('directusClient');
+        return new GenericAction($authClient, $gameClient, $directusClient);
     },
 
     AuthMiddleware::class => function(ContainerInterface $container) {

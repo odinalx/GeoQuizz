@@ -953,6 +953,13 @@ COPY public.directus_activity (id, action, "user", "timestamp", ip, user_agent, 
 44	create	9d83a681-8388-4ff9-ae4b-7038fad0560a	2025-02-05 17:49:42.775+00	192.168.160.1	Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0	photos	0a5ad80f-6d33-435b-bb15-18fd65a39f68	http://localhost:33556
 45	update	9d83a681-8388-4ff9-ae4b-7038fad0560a	2025-02-05 17:49:42.777+00	192.168.160.1	Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0	photos	0a5ad80f-6d33-435b-bb15-18fd65a39f68	http://localhost:33556
 46	create	9d83a681-8388-4ff9-ae4b-7038fad0560a	2025-02-05 17:49:42.781+00	192.168.160.1	Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0	photos	9d062e03-eaff-4e35-b2e6-a483c5aa5ae1	http://localhost:33556
+47	login	9d83a681-8388-4ff9-ae4b-7038fad0560a	2025-02-05 19:47:32.041+00	192.168.240.1	Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0	directus_users	9d83a681-8388-4ff9-ae4b-7038fad0560a	http://localhost:33556
+48	login	9d83a681-8388-4ff9-ae4b-7038fad0560a	2025-02-05 20:08:20.692+00	192.168.240.1	axios/1.7.2	directus_users	9d83a681-8388-4ff9-ae4b-7038fad0560a	\N
+49	login	9d83a681-8388-4ff9-ae4b-7038fad0560a	2025-02-05 21:02:24.598+00	192.168.240.1	axios/1.7.2	directus_users	9d83a681-8388-4ff9-ae4b-7038fad0560a	\N
+50	create	9d83a681-8388-4ff9-ae4b-7038fad0560a	2025-02-05 21:07:33.294+00	192.168.240.1	axios/1.7.2	directus_users	06e0a60d-1924-41e2-aef5-1c0526264f4c	\N
+51	create	9d83a681-8388-4ff9-ae4b-7038fad0560a	2025-02-05 21:14:56.879+00	192.168.240.1	Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0	directus_permissions	1	http://localhost:33556
+52	create	9d83a681-8388-4ff9-ae4b-7038fad0560a	2025-02-05 21:14:56.884+00	192.168.240.1	Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0	directus_permissions	2	http://localhost:33556
+53	update	9d83a681-8388-4ff9-ae4b-7038fad0560a	2025-02-05 21:14:56.887+00	192.168.240.1	Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0	directus_policies	abf8a154-5b1c-4a46-ac9c-7300570f4f17	http://localhost:33556
 \.
 
 
@@ -1155,6 +1162,8 @@ COPY public.directus_panels (id, dashboard, name, icon, color, show_header, note
 --
 
 COPY public.directus_permissions (id, collection, action, permissions, validation, presets, fields, policy) FROM stdin;
+1	photos	read	\N	\N	\N	*	abf8a154-5b1c-4a46-ac9c-7300570f4f17
+2	series	read	\N	\N	\N	*	abf8a154-5b1c-4a46-ac9c-7300570f4f17
 \.
 
 
@@ -1174,6 +1183,7 @@ e36db6ca-f905-43df-bf77-de2846a7eb8a	Administrator	verified	$t:admin_description
 
 COPY public.directus_presets (id, bookmark, "user", role, collection, search, layout, layout_query, layout_options, refresh_interval, filter, icon, color) FROM stdin;
 1	\N	9d83a681-8388-4ff9-ae4b-7038fad0560a	\N	series	\N	\N	{"tabular":{"fields":["description","name","id"]}}	\N	\N	\N	bookmark	\N
+2	\N	9d83a681-8388-4ff9-ae4b-7038fad0560a	\N	directus_users	\N	cards	{"cards":{"sort":["email"],"page":1}}	{"cards":{"icon":"account_circle","title":"{{ first_name }} {{ last_name }}","subtitle":"{{ email }}","size":4}}	\N	\N	bookmark	\N
 \.
 
 
@@ -1236,6 +1246,9 @@ COPY public.directus_revisions (id, activity, collection, item, data, delta, par
 43	44	photos	0a5ad80f-6d33-435b-bb15-18fd65a39f68	{"id":"0a5ad80f-6d33-435b-bb15-18fd65a39f68","serie_id":"85678cf6-5977-45aa-b727-8d5c677f7e41","name":"ARTEM","lat":"48.6728663484446","long":"6.17165752016288","url":"images/30.jpg","link":"https://live.staticflickr.com/65535/51217348797_7c1eb78d1b_b.jpg"}	{"id":"0a5ad80f-6d33-435b-bb15-18fd65a39f68","serie_id":"85678cf6-5977-45aa-b727-8d5c677f7e41","name":"ARTEM","lat":"48.6728663484446","long":"6.17165752016288","url":"images/30.jpg","link":"https://live.staticflickr.com/65535/51217348797_7c1eb78d1b_b.jpg"}	\N	\N
 44	45	photos	0a5ad80f-6d33-435b-bb15-18fd65a39f68	{"id":"0a5ad80f-6d33-435b-bb15-18fd65a39f68","serie_id":"85678cf6-5977-45aa-b727-8d5c677f7e41","name":"Ensic","lat":"48.699603595116","long":"6.17990889333166","url":"images/31.jpg","link":"https://th.bing.com/th/id/R.084fa9f085165b0d47e0e309c358d4cc?rik=zgQMf1MoZM4%2bqg&pid=ImgRaw&r=0"}	{"serie_id":"85678cf6-5977-45aa-b727-8d5c677f7e41","name":"Ensic","lat":"48.699603595116","long":"6.17990889333166","url":"images/31.jpg","link":"https://th.bing.com/th/id/R.084fa9f085165b0d47e0e309c358d4cc?rik=zgQMf1MoZM4%2bqg&pid=ImgRaw&r=0"}	\N	\N
 45	46	photos	9d062e03-eaff-4e35-b2e6-a483c5aa5ae1	{"id":"9d062e03-eaff-4e35-b2e6-a483c5aa5ae1","serie_id":"85678cf6-5977-45aa-b727-8d5c677f7e41","name":"Faculté des Sciences et Technologies","lat":"48.6650952083834","long":"6.16053031759351","url":"Images/32.jpg","link":"https://www.pagesjaunes.fr/media/ugc/faculte_des_sciences_et_technologies_05454700_094219295"}	{"id":"9d062e03-eaff-4e35-b2e6-a483c5aa5ae1","serie_id":"85678cf6-5977-45aa-b727-8d5c677f7e41","name":"Faculté des Sciences et Technologies","lat":"48.6650952083834","long":"6.16053031759351","url":"Images/32.jpg","link":"https://www.pagesjaunes.fr/media/ugc/faculte_des_sciences_et_technologies_05454700_094219295"}	\N	\N
+46	50	directus_users	06e0a60d-1924-41e2-aef5-1c0526264f4c	{"id":"06e0a60d-1924-41e2-aef5-1c0526264f4c","email":"user@example.com","password":"**********"}	{"id":"06e0a60d-1924-41e2-aef5-1c0526264f4c","email":"user@example.com","password":"**********"}	\N	\N
+47	51	directus_permissions	1	{"policy":"abf8a154-5b1c-4a46-ac9c-7300570f4f17","permissions":null,"validation":null,"fields":["*"],"presets":null,"collection":"photos","action":"read"}	{"policy":"abf8a154-5b1c-4a46-ac9c-7300570f4f17","permissions":null,"validation":null,"fields":["*"],"presets":null,"collection":"photos","action":"read"}	\N	\N
+48	52	directus_permissions	2	{"policy":"abf8a154-5b1c-4a46-ac9c-7300570f4f17","permissions":null,"validation":null,"fields":["*"],"presets":null,"collection":"series","action":"read"}	{"policy":"abf8a154-5b1c-4a46-ac9c-7300570f4f17","permissions":null,"validation":null,"fields":["*"],"presets":null,"collection":"series","action":"read"}	\N	\N
 \.
 
 
@@ -1254,6 +1267,9 @@ COPY public.directus_roles (id, name, icon, description, parent) FROM stdin;
 
 COPY public.directus_sessions (token, "user", expires, ip, user_agent, share, origin, next_token) FROM stdin;
 GmpeaqJORyLX37Rsgb3mOJ48eEWlQvEZwATPl-YU0yzyyaWnt0vPm4-dGsX2HAXb	9d83a681-8388-4ff9-ae4b-7038fad0560a	2025-02-12 17:47:20.785+00	192.168.160.1	Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0	\N	http://localhost:33556	\N
+BVmSQp0myG4umeQ0CYM6IHNFcMrYBawsxWpoEq1BhA6qbD_7-GI_Gx1yySq9KDSQ	9d83a681-8388-4ff9-ae4b-7038fad0560a	2025-02-12 19:47:32.027+00	192.168.240.1	Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0	\N	http://localhost:33556	\N
+xG-iWog1_zm8kvyGA4CLqC5jqHKLQNGhHjkhD9sObRRx53zzRUuZd8_sJDPugOJO	9d83a681-8388-4ff9-ae4b-7038fad0560a	2025-02-12 20:08:20.68+00	192.168.240.1	axios/1.7.2	\N	\N	\N
+Muzq7j2MsEbTr9dGXO2Y2Zp14MPyjSnO_wBuIJDsgFy1_iD2K3qr3W3GP9VlJWqO	9d83a681-8388-4ff9-ae4b-7038fad0560a	2025-02-12 21:02:24.589+00	192.168.240.1	axios/1.7.2	\N	\N	\N
 \.
 
 
@@ -1286,7 +1302,8 @@ COPY public.directus_translations (id, language, key, value) FROM stdin;
 --
 
 COPY public.directus_users (id, first_name, last_name, email, password, location, title, description, tags, avatar, language, tfa_secret, status, role, token, last_access, last_page, provider, external_identifier, auth_data, email_notifications, appearance, theme_dark, theme_light, theme_light_overrides, theme_dark_overrides) FROM stdin;
-9d83a681-8388-4ff9-ae4b-7038fad0560a	Admin	User	admin@admin.com	$argon2id$v=19$m=65536,t=3,p=4$ldbeGnw9Vpw7TVve1vm8FA$os+nxmcnwY1jmP9O9lWrbzK78x6zeFJ8dHE+BF3shQQ	\N	\N	\N	\N	\N	\N	\N	active	105cea0d-738a-437b-9183-a23a33deacde	\N	2025-02-05 17:47:20.801+00	/content/photos	default	\N	\N	t	\N	\N	\N	\N	\N
+9d83a681-8388-4ff9-ae4b-7038fad0560a	Admin	User	admin@admin.com	$argon2id$v=19$m=65536,t=3,p=4$ldbeGnw9Vpw7TVve1vm8FA$os+nxmcnwY1jmP9O9lWrbzK78x6zeFJ8dHE+BF3shQQ	\N	\N	\N	\N	\N	\N	\N	active	105cea0d-738a-437b-9183-a23a33deacde	\N	2025-02-05 21:02:24.6+00	/settings/policies/abf8a154-5b1c-4a46-ac9c-7300570f4f17	default	\N	\N	t	\N	\N	\N	\N	\N
+06e0a60d-1924-41e2-aef5-1c0526264f4c	\N	\N	user@example.com	$argon2id$v=19$m=65536,t=3,p=4$BuslLM2v2MeDkYTPA6U89Q$9JljQbJim+5e4wzmnj31Nr/gEAsnX4KXRiUjtO+WCV0	\N	\N	\N	\N	\N	\N	\N	active	\N	\N	\N	\N	default	\N	\N	t	\N	\N	\N	\N	\N
 \.
 
 
@@ -1358,7 +1375,7 @@ COPY public.series (id, name, description) FROM stdin;
 -- Name: directus_activity_id_seq; Type: SEQUENCE SET; Schema: public; Owner: root
 --
 
-SELECT pg_catalog.setval('public.directus_activity_id_seq', 46, true);
+SELECT pg_catalog.setval('public.directus_activity_id_seq', 53, true);
 
 
 --
@@ -1379,14 +1396,14 @@ SELECT pg_catalog.setval('public.directus_notifications_id_seq', 1, false);
 -- Name: directus_permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: root
 --
 
-SELECT pg_catalog.setval('public.directus_permissions_id_seq', 1, false);
+SELECT pg_catalog.setval('public.directus_permissions_id_seq', 2, true);
 
 
 --
 -- Name: directus_presets_id_seq; Type: SEQUENCE SET; Schema: public; Owner: root
 --
 
-SELECT pg_catalog.setval('public.directus_presets_id_seq', 1, true);
+SELECT pg_catalog.setval('public.directus_presets_id_seq', 2, true);
 
 
 --
@@ -1400,7 +1417,7 @@ SELECT pg_catalog.setval('public.directus_relations_id_seq', 1, true);
 -- Name: directus_revisions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: root
 --
 
-SELECT pg_catalog.setval('public.directus_revisions_id_seq', 45, true);
+SELECT pg_catalog.setval('public.directus_revisions_id_seq', 48, true);
 
 
 --

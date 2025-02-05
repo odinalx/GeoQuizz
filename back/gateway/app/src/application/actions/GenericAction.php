@@ -1,6 +1,7 @@
 <?php
 namespace gateway\application\actions;
 
+use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use GuzzleHttp\ClientInterface;
@@ -13,10 +14,12 @@ class GenericAction extends AbstractAction
 {
     private ClientInterface $authClient;
     private ClientInterface $gameClient;
+    private ClientInterface $directusClient;
 
-    public function __construct(ClientInterface $authClient, ClientInterface $gameClient) {
+    public function __construct(ClientInterface $authClient, ClientInterface $gameClient,ClientInterface $directusClient) {
         $this->authClient = $authClient;
         $this->gameClient = $gameClient;
+        $this->directusClient = $directusClient;
     }
 
     public function __invoke(ServerRequestInterface $rq, ResponseInterface $rs, array $args): ResponseInterface {
@@ -29,6 +32,8 @@ class GenericAction extends AbstractAction
             $client = $this->authClient;
         } elseif (strpos($path, '/games') === 0) {
             $client = $this->gameClient;
+        } else if (strpos($path, '/items') === 0) {
+            $client = $this->directusClient;
         } else {
             throw new HttpNotFoundException($rq, 'Route not found');
         }
