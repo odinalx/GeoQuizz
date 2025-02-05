@@ -30,6 +30,12 @@ GeoQuizz est un jeu web inspiré de **GeoGuessr**, où les joueurs doivent place
 docker-compose up -d --build
 ```
 
+### **Sauvergarder un dump de la bd Directus si on fait des changements dedans**
+```bash
+cd back/app-directus/data
+docker exec -t db-directus-geoquizz pg_dump -U root -d directusdb > data.sql
+```
+
 ### **Accéder aux services**
 
 - **Frontend** : [http://localhost:5173](http://localhost:5173)
