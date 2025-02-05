@@ -1,4 +1,67 @@
 services:
+
+  gateway.geoquizz:
+      build: ./back/gateway/app
+      container_name: gateway-geoquizz
+      volumes:
+        - ./back/gateway/app:/var/app
+      ports:
+        - '33554:80'
+      networks:
+        - geoquizz-network
+  
+  api.auth:
+    build: ./back/app-auth/app
+    container_name: api-auth-geoquizz
+    volumes:
+      - ./back/app-auth/app:/var/app
+    ports:
+      - "33550:80"
+    env_file:
+      - ./back/app-auth/auth.env
+    depends_on:
+      - auth.db
+    networks:
+      - geoquizz-network
+
+  auth.db:
+    image: postgres:latest
+    container_name: db-auth-geoquizz
+    ports:
+      - '33551:5432'
+    env_file:
+      - ./back/app-auth/auth.env
+    volumes:
+      - ./back/app-auth/data:/var/lib/postgresql/data
+      - ./back/app-auth/sql/:/docker-entrypoint-initdb.d
+    networks:
+      - geoquizz-network
+  
+  api.games:
+    build: ./back/app-games/app
+    container_name: api-games-geoquizz
+    volumes:
+      - ./back/app-games/app:/var/app
+    ports:
+      - "33552:80"
+    depends_on:
+      - games.db
+    networks:
+      - geoquizz-network
+  
+  games.db :
+    image: postgres:latest
+    container_name: db-games-geoquizz
+    ports:
+      - '33553:5432'
+    env_file:
+      - ./back/app-games/game.env
+    volumes:
+      - ./back/app-games/data:/var/lib/postgresql/data
+      - ./back/app-games/sql/:/docker-entrypoint-initdb.d
+    networks:
+      - geoquizz-network
+    
   api.directus:
     image: directus/directus:latest
     container_name: api-directus-geoquizz
@@ -11,6 +74,7 @@ services:
       - "33556:8055"
     networks:
       - geoquizz-network
+
   directus.db:
     image: postgres:latest
     container_name: db-directus-geoquizz
@@ -26,8 +90,24 @@ services:
     env_file:
       - ./back/app-directus/directus-db.env
     networks:
-      - geoquizz-network
+      - geoquizz-network  
 
+  frontend:
+    build: ./front
+    container_name: geoquizz_frontend
+    restart: always
+    ports:
+      - "33555:5173"
+    depends_on:
+      - directus
+      # - auth_service
+      # - game_service
+    networks:
+      - geoquizz-network
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+  
   adminer:
     image: adminer
     container_name: adminer-geoquizz
@@ -35,6 +115,7 @@ services:
       - '8080:8080'
     networks:
       - geoquizz-network
+      
 
 networks:
   geoquizz-network:
