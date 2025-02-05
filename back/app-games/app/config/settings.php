@@ -3,5 +3,5 @@
 return  [
 
     'displayErrorDetails' => true,
-    'games.db.config' => __DIR__ . '/game.db.ini',
+    'games.db.config' => __DIR__ . '/games.db.ini',
     ] ;
