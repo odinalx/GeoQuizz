@@ -44,7 +44,7 @@ class CreateGameAction extends AbstractAction
             $rs->getBody()->write(json_encode($responseData));
             return $rs->withHeader('Content-Type', 'application/json')->withStatus(201);
         } catch (ServiceCreationErrorException $e) {
-            return $this->respondWithError($rs, $e->getMessage(), 400);
+            return $this->respondWithError($rs, $e->getMessage(), 500);
         } catch (\Exception $e) {
             return $this->respondWithError($rs, $e->getMessage(), 500);
         }

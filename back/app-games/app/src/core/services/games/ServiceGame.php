@@ -8,8 +8,8 @@ use geoquizz\core\dto\GameDTO;
 use geoquizz\core\repositoryInterfaces\GameRepositoryInterface;
 use geoquizz\core\services\games\ServiceCreationErrorException;
 use geoquizz\infrastructure\PDO\RepositoryCreationErrorException;
-use geoquizz\infrastructure\PDO\RepositoryNotFoundException;
-use geoquizz\infrastructure\PDO\StatusException;
+use geoquizz\infrastructure\PDO\GameNotFoundException;
+use geoquizz\infrastructure\PDO\GameStatusException;
 
 class ServiceGame implements ServiceGameInterface
 {
@@ -34,8 +34,10 @@ class ServiceGame implements ServiceGameInterface
     {
         try {
             return $this->gameRepository->getGame($id);
-        } catch (RepositoryNotFoundException $e) {
+        } catch (GameNotFoundException $e) {
             throw new ServiceNotFoundException($e->getMessage());
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
         }
     }
 
@@ -43,9 +45,11 @@ class ServiceGame implements ServiceGameInterface
     {
         try {
             return $this->gameRepository->startGame($id);
-        } catch (RepositoryNotFoundException $e) {
+        } catch (GameNotFoundException $e) {
             throw new ServiceNotFoundException($e->getMessage());
-        } catch (StatusException $e) {
+        } catch (GameStatusException $e) {
+            throw new GameAlreadyStartException($e->getMessage());
+        } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
     }
