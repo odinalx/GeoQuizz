@@ -1,7 +1,0 @@
-driver=pgsql
-host=<database>.db
-username=
-password=
-database=<database>
-charset=utf8
-collation=utf8_unicode_ci
