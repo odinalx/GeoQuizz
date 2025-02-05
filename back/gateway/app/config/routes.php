@@ -14,11 +14,11 @@ return function(App $app): App {
     // Public routes
     $app->get('/', HomeAction::class)->setName('home');
 
-    // $app->group('/rdvs', function($group) {
-    //     $group->map(['GET', 'POST', 'PATCH', 'DELETE'], '[/{params:.*}]', GenericAction::class);
-    // })->add(AuthMiddleware::class);
 
-    
+    $app->group('/games', function($group) {
+        $group->map(['GET', 'POST', 'PATCH', 'DELETE'], '[/{params:.*}]', GenericAction::class);
+    })->add(AuthMiddleware::class);
+
     $app->map(['GET', 'POST', 'PATCH', 'DELETE', 'PUT'], '/{routes:.+}', GenericAction::class)->setName('genericRoute');
 
                                                             

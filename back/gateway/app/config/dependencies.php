@@ -13,9 +13,17 @@ return [
         ]);
     },
 
+    'gameClient' => function () {
+        return new Client([
+            'base_uri' => 'http://api.games:80/',
+            'timeout'  => 1000.0,
+        ]);
+    },
+
     GenericAction::class => function(ContainerInterface $container) {
         $authClient = $container->get('authClient');
-        return new GenericAction($authClient);
+        $gameClient = $container->get('gameClient');
+        return new GenericAction($authClient, $gameClient);
     },
 
     AuthMiddleware::class => function(ContainerInterface $container) {

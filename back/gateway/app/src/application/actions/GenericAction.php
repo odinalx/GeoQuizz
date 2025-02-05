@@ -4,14 +4,19 @@ namespace gateway\application\actions;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 use Slim\Exception\HttpNotFoundException;
 
 class GenericAction extends AbstractAction
 {
     private ClientInterface $authClient;
+    private ClientInterface $gameClient;
 
-    public function __construct(ClientInterface $authClient) {
+    public function __construct(ClientInterface $authClient, ClientInterface $gameClient) {
         $this->authClient = $authClient;
+        $this->gameClient = $gameClient;
     }
 
     public function __invoke(ServerRequestInterface $rq, ResponseInterface $rs, array $args): ResponseInterface {
@@ -19,9 +24,11 @@ class GenericAction extends AbstractAction
         $path = $rq->getUri()->getPath();
         $body = $rq->getBody()->getContents();
 
-        //on détermine le client à utiliser en fonction du path
+        // Déterminer le client à utiliser en fonction du path
         if (strpos($path, '/auth') === 0) {
-            $client = $this->authClient; // Ajouter les routes /auth uniquement pour le frontend
+            $client = $this->authClient;
+        } elseif (strpos($path, '/games') === 0) {
+            $client = $this->gameClient;
         } else {
             throw new HttpNotFoundException($rq, 'Route not found');
         }
@@ -32,22 +39,51 @@ class GenericAction extends AbstractAction
                 'headers' => $rq->getHeaders()
             ]);
 
-            $rs = $rs->withHeader('Content-Type', 'application/json');
             $rs->getBody()->write($response->getBody()->getContents());
-            return $rs->withStatus($response->getStatusCode());
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            $statusCode = $e->getResponse()->getStatusCode();
-            if ($statusCode === 400) {
-                $errorBody = $e->getResponse()->getBody()->getContents();
-                $errorData = json_decode($errorBody, true);
-                $errorMessage = $errorData['error'] ?? 'Bad Request';
-                $rs->getBody()->write(json_encode(['error' => $errorMessage]));
-                return $rs->withStatus(400)->withHeader('Content-Type', 'application/json');
-            } elseif ($statusCode === 404) {
-                throw new HttpNotFoundException($rq, 'Resource not found');
-            } else {
-                throw $e;
-            }
+            return $rs->withHeader('Content-Type', 'application/json')
+                      ->withStatus($response->getStatusCode());
+
+        } catch (ClientException $e) {
+            return $this->handleClientException($rs, $e);
+        } catch (ServerException $e) {
+            return $this->handleClientException($rs, $e);
         }
+    }
+
+    private function handleClientException(ResponseInterface $rs, BadResponseException $e): ResponseInterface {
+        $statusCode = $e->getResponse()->getStatusCode();
+        $errorBody = $e->getResponse()->getBody()->getContents();
+        $errorData = json_decode($errorBody, true);
+
+        // Récupérer le message d'erreur envoyé par le microservice
+        $errorMessage = $errorData['error'] ?? 'Une erreur inconnue est survenue.';
+
+        switch ($statusCode) {
+            case 400:
+                return $this->respondWithError($rs, "Requête invalide : $errorMessage", 400);
+            case 401:
+                return $this->respondWithError($rs, "Accès non autorisé : $errorMessage", 401);
+            case 403:
+                return $this->respondWithError($rs, "Accès interdit : $errorMessage", 403);
+            case 404:
+                return $this->respondWithError($rs, "Ressource non trouvée : $errorMessage" , 404);
+            case 409:
+                return $this->respondWithError($rs, "Conflit : $errorMessage", 409);
+            case 500:
+                return $this->respondWithError($rs, "Erreur interne du serveur : $errorMessage", 500);
+            default:
+                return $this->respondWithError($rs, "Erreur inconnue.", $statusCode);
+        }
+    }
+
+    private function respondWithError(ResponseInterface $response, string $message, int $status): ResponseInterface
+    {
+        $responseData = [
+            'status' => $status,
+            'error' => $message
+        ];
+
+        $response->getBody()->write(json_encode($responseData, JSON_PRETTY_PRINT));
+        return $response->withHeader('Content-Type', 'application/json')->withStatus($status);
     }
 }
