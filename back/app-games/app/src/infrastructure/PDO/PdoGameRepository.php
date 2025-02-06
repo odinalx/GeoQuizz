@@ -88,4 +88,34 @@ class PdoGameRepository implements GameRepositoryInterface
             throw new \Exception("Impossible de démarrer la partie : " . $e->getMessage());
         }
     }
+
+    public function finishGame(string $id): GameDTO
+    {
+        try {
+            $stmt = $this->pdo->prepare('SELECT status FROM games WHERE id = :id');
+            $stmt->execute(['id' => $id]);
+            $game = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$game) {
+                throw new GameNotFoundException('La partie demandée est introuvable');
+            }
+
+            if ($game['status'] === Game::STATUS_FINISHED) {
+                throw new GameStatusException('La partie est déjà terminée');
+            }
+            if ($game['status'] === Game::STATUS_CREATED) {
+                throw new GameStatusException('La partie n\'est pas encore démarrée');
+            }
+
+            $stmt = $this->pdo->prepare('UPDATE games SET status = :status WHERE id = :id');
+            $stmt->execute([
+                'id' => $id,
+                'status' => Game::STATUS_FINISHED
+            ]);
+
+            return $this->getGame($id);
+        } catch (PDOException $e) {
+            throw new \Exception("Impossible de terminer la partie : " . $e->getMessage());
+        }
+    }
 }

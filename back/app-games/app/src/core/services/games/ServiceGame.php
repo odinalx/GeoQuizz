@@ -53,4 +53,17 @@ class ServiceGame implements ServiceGameInterface
             throw new \Exception($e->getMessage());
         }
     }
+
+    public function finishGame(string $id): GameDTO
+    {
+        try {
+            return $this->gameRepository->finishGame($id);
+        } catch (GameNotFoundException $e) {
+            throw new ServiceNotFoundException($e->getMessage());
+        } catch (GameStatusException $e) {
+            throw new GameAlreadyStartException($e->getMessage());
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+    }
 }
