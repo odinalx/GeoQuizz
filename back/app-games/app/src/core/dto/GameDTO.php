@@ -11,6 +11,7 @@ class GameDTO extends DTO {
     protected string $status;
     protected int $score;
     protected \DateTimeImmutable $created_at;
+    protected array $photos = [];
 
     public function __construct(Game $game) {
         $this->id = $game->getID();
@@ -19,7 +20,25 @@ class GameDTO extends DTO {
         $this->status = $game->status;
         $this->score = $game->score;
         $this->created_at = $game->created_at;
+        $this->photos = $game->photos;
     }
+
+    public function getPhotos(): array {
+        $photosArray = [];
+        foreach ($this->photos as $photo) {
+            $photosArray[] = [
+                'id' => $photo->getID(),
+                'serie_id' => $photo->serie_id,
+                'name' => $photo->name,
+                'lat' => $photo->lat,
+                'long' => $photo->long,
+                'url' => $photo->url,
+                'link' => $photo->link
+            ];
+        }
+        return $photosArray;
+    }
+    
 
     public function toEntity(): Game {
         $game = new Game($this->creatorId, $this->serieId);
@@ -27,6 +46,7 @@ class GameDTO extends DTO {
         $game->setStatus($this->status);
         $game->setScore($this->score);
         $game->setCreatedAt($this->created_at);
+        $game->setPhotos($this->photos);
         return $game;
     }
 }

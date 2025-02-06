@@ -16,6 +16,7 @@ class Game extends Entity {
     protected string $status= self::STATUS_CREATED;
     protected int $score;
     protected \DateTimeImmutable $created_at;
+    protected array $photos = [];
 
     public function __construct(string $creatorId, string $serieId){
         $this->setID(Guid::uuid4()->toString());            
@@ -35,6 +36,10 @@ class Game extends Entity {
 
     public function setCreatedAt(\DateTimeImmutable $created_at){
         $this->created_at = $created_at;
+    }
+
+    public function setPhotos(array $photos){
+        $this->photos = $photos;
     }
 
     public function toDTO(): GameDTO {

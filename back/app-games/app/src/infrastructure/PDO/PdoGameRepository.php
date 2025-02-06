@@ -38,6 +38,38 @@ class PdoGameRepository implements GameRepositoryInterface
         }
     }
 
+    public function savePhotos(string $gameid, array $photos): void
+    {
+        try {
+            $stmt = $this->pdo->prepare('INSERT INTO game_photos (game_id, photo_id) VALUES (:game_id, :photo_id)');
+
+            foreach ($photos as $photo) {
+                $stmt->execute([
+                    'game_id' => $gameid,
+                    'photo_id' => $photo
+                ]);
+            }
+        } catch (PDOException $e) {
+            throw new \Exception("Impossible de sauvegarder les photos : " . $e->getMessage());
+        }
+    }
+
+
+    public function getPhotos(string $gameid): array
+    {
+        try {
+            $stmt = $this->pdo->prepare('SELECT photo_id FROM game_photos WHERE game_id = :game_id');
+            $stmt->execute(['game_id' => $gameid]);
+
+            $photos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return array_column($photos, 'photo_id');
+        } catch (PDOException $e) {
+            throw new \Exception("Impossible de récupérer les photos : " . $e->getMessage());
+        }
+    }
+
+
     public function getGame(string $id): GameDTO
     {
         try {

@@ -25,10 +25,6 @@ class StartGameAction extends AbstractAction {
                 'data' => [
                     'game_id' => $gameDTO->id,
                     'status' => $gameDTO->status,
-                    'score' => $gameDTO->score,
-                    'creator_id' => $gameDTO->creatorId,
-                    'serie_id' => $gameDTO->serieId,
-                    'created_at' => $gameDTO->created_at->format('d-m-Y H:i'),
                 ],
             ];
     

@@ -28,6 +28,7 @@ class GetGameAction extends AbstractAction {
                     'creator_id' => $gameDTO->creatorId,
                     'serie_id' => $gameDTO->serieId,                    
                     'created_at' => $gameDTO->created_at->format('d-m-Y H:i'),
+                    'photos' => $gameDTO->getPhotos(),
                 ],
             ];
 

@@ -11,6 +11,7 @@ use geoquizz\core\services\games\ServiceCreationErrorException;
 use geoquizz\infrastructure\PDO\RepositoryCreationErrorException;
 use geoquizz\infrastructure\PDO\GameNotFoundException;
 use geoquizz\infrastructure\PDO\GameStatusException;
+use geoquizz\core\domain\entities\photos\Photo;
 
 class ServiceGame implements ServiceGameInterface
 {
@@ -27,7 +28,14 @@ class ServiceGame implements ServiceGameInterface
     {
         try {
             $game = new Game($g->creatorId, $g->serieId);
-            return $this->gameRepository->save($game);
+            $savedGame = $this->gameRepository->save($game);
+            $gameId = $savedGame->id;
+
+            $photos = $this->photosRepository->getPhotosBySerieId($game->serieId);
+
+            $this->gameRepository->savePhotos($gameId, $photos);
+
+            return $savedGame;
         } catch (RepositoryCreationErrorException $e) {
             throw new ServiceCreationErrorException($e->getMessage());
         }
@@ -36,13 +44,38 @@ class ServiceGame implements ServiceGameInterface
     public function getGame(string $id): GameDTO
     {
         try {
-            return $this->gameRepository->getGame($id);
+            $photoIds = $this->gameRepository->getPhotos($id);
+
+            $photos = [];
+            foreach ($photoIds as $photoId) {
+                $photoData = $this->photosRepository->getPhotoById($photoId);
+                $photoData = $photoData['data'][0];
+
+                $photo = new Photo(
+                    $photoData['serie_id'],
+                    $photoData['name'],
+                    $photoData['lat'],
+                    $photoData['long'],
+                    $photoData['url'],
+                    $photoData['link']
+                );
+                $photo->setID($photoData['id']);
+
+                $photos[] = $photo;
+            }
+
+            $game = $this->gameRepository->getGame($id)->toEntity();
+
+            $game->setPhotos($photos);
+
+            return $game->toDTO();
         } catch (GameNotFoundException $e) {
             throw new ServiceNotFoundException($e->getMessage());
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
     }
+
 
     public function startGame(string $id): GameDTO
     {
@@ -124,7 +157,7 @@ class ServiceGame implements ServiceGameInterface
             throw new \Exception("Impossible de jouer: " . $e->getMessage());
         }
     }
-    
+
     private function calculateDistance(string $photoLat, string $photoLong, string $lat, string $long): float
     {
         $latDiff = ((float)$lat - (float)$photoLat) * 111;

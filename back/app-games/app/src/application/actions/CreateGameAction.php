@@ -38,6 +38,7 @@ class CreateGameAction extends AbstractAction
                 'data' => [
                     'self' => '/games/' . $gameDTO->id,
                     'game_id' => $gameDTO->id,
+                    'status' => $gameDTO->status,
                 ],
             ];
 
