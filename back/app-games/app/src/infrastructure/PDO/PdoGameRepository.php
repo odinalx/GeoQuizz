@@ -118,4 +118,19 @@ class PdoGameRepository implements GameRepositoryInterface
             throw new \Exception("Impossible de terminer la partie : " . $e->getMessage());
         }
     }
+
+    public function saveScore(string $id, int $score): GameDTO
+    {
+        try {
+            $stmt = $this->pdo->prepare('UPDATE games SET score = :score WHERE id = :id');
+            $stmt->execute([
+                'id' => $id,
+                'score' => $score
+            ]);
+
+            return $this->getGame($id);
+        } catch (PDOException $e) {
+            throw new \Exception("Impossible de sauvegarder le score : " . $e->getMessage());
+        }
+    }
 }

@@ -5,7 +5,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use geoquizz\core\services\games\ServiceGameInterface;
 use geoquizz\core\services\games\ServiceNotFoundException;
-use geoquizz\core\services\exceptions\ServiceException;
 use geoquizz\core\services\games\GameAlreadyStartException;
 
 class StartGameAction extends AbstractAction {

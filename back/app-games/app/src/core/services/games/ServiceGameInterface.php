@@ -10,4 +10,5 @@ interface ServiceGameInterface
     public function getGame(string $id): GameDTO;
     public function startGame(string $id): GameDTO;
     public function finishGame(string $id): GameDTO;
+    public function play(string $gameid, string $photoid, string $lat, string $long, string $time): GameDTO;
 }

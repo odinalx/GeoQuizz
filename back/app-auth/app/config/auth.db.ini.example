@@ -1,7 +1,7 @@
 driver=pgsql
-host=<database>.db
+host=auth.db
 username=
 password=
-database=<database>
+database=authdb
 charset=utf8
 collation=utf8_unicode_ci

@@ -1,0 +1,19 @@
+meta {
+  name: GetPhotoById
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://api.directus:33556/items/photos?filter={"id":{"_eq":"55d1ecb2-82d9-445c-996b-68f7d1862432"}}
+  body: none
+  auth: none
+}
+
+query {
+  filter: {"id":{"_eq":"55d1ecb2-82d9-445c-996b-68f7d1862432"}}
+}
+
+headers {
+  ~Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjlkODNhNjgxLTgzODgtNGZmOS1hZTRiLTcwMzhmYWQwNTYwYSIsInJvbGUiOiIxMDVjZWEwZC03MzhhLTQzN2ItOTE4My1hMjNhMzNkZWFjZGUiLCJhcHBfYWNjZXNzIjp0cnVlLCJhZG1pbl9hY2Nlc3MiOnRydWUsImlhdCI6MTczODgzNTU4MywiZXhwIjoxNzM4ODM2NDgzLCJpc3MiOiJkaXJlY3R1cyJ9.LFomrVWdUfhSLIswLhIQHLeWK7plZbtgD8LjGxNm_2U
+}

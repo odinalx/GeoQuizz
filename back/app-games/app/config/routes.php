@@ -8,6 +8,7 @@ use geoquizz\application\actions\CreateGameAction;
 use geoquizz\application\actions\GetGameAction;
 use geoquizz\application\actions\StartGameAction;
 use geoquizz\application\actions\FinishGameAction;
+use geoquizz\application\actions\PlayAction;
 
 return function(App $app): App {
 
@@ -19,6 +20,7 @@ return function(App $app): App {
     $app->get('/games/{id}', GetGameAction::class)->setName('getGame');
     $app->patch('/games/{id}/start', StartGameAction::class)->setName('startGame');
     $app->patch('/games/{id}/finish', FinishGameAction::class)->setName('finishGame');
+    $app->post('/games/{id}/play', PlayAction::class)->setName('play');
                                                             
     $app->options('/{routes:.+}', function (Request $request, Response $response) {
         return $response;
