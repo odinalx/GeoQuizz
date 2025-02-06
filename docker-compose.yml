@@ -77,7 +77,7 @@ services:
     volumes:
       - ./back/app-directus/data:/docker-entrypoint-initdb.d
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "root", "-d", "directusdb" ]
+      test: [ "CMD", "pg_isready", "root", "root", "directusdb", "directusdb" ]
       interval: 10s
       timeout: 5s
       retries: 5
