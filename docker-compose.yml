@@ -77,7 +77,7 @@ services:
     volumes:
       - ./back/app-directus/data:/docker-entrypoint-initdb.d
     healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "root", "-d", "directusdb" ]
+      test: [ "CMD", "pg_isready", "root", "root", "-d", "directusdb" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -112,8 +112,44 @@ services:
       - '8080:8080'
     networks:
       - geoquizz-network
-      
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    networks:
+      - geoquizz-network
+ 
+  api.mail:
+    build: ./back/app-mail      
+    env_file: ./back/app-mail/mail.env
+    ports:
+      - '6084:80'
+    volumes:
+      - .back/app.mail:/var/php
+    working_dir: /var/php
+    networks:
+      - geoquizz-network
+    depends_on:
+      - rabbitmq
+    command: php -S 0.0.0.0:80 -t /var/php/public
+
+  mailcatcher:
+    image: schickling/mailcatcher
+    ports:
+      - '1080:1080' # Interface web de MailCatcher
+      - '1025:1025' # Port 
+    networks:
+      - geoquizz-network   
 
 networks:
-  geoquizz-network:
-    driver: bridge
+    geoquizz-network:
+      driver: bridge
