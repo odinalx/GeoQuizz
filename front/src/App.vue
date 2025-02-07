@@ -1,75 +1,66 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { ref } from 'vue'
+
+// À remplacer plus tard par le vrai state de l'authentification
+const isLoggedIn = ref(false)
+
+const menuItems = [
+  { name: 'Parties publiques', path: '/home', requiresAuth: false },
+  { name: 'Jouer', path: '/game', requiresAuth: false },
+  { name: 'Profile', path: '/profile', requiresAuth: true }
+]
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-100">
-    <header class="bg-white shadow">
-      <div class="max-w-7xl mx-auto py-6 px-4">
-        <img 
-          alt="Vue logo" 
-          class="h-32 w-auto mx-auto" 
-          src="@/assets/logo.svg"
-        />
+  <div class="min-h-screen bg-slate-50">
+    <!-- Header avec navigation -->
+    <header class="bg-white shadow-sm w-full">
+      <div class="w-full mx-auto">
+        <nav class="flex items-center justify-center h-20">
+          <!-- Logo et titre -->
+          <RouterLink to="/" class="flex items-center mr-16">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center">
+              <span class="text-2xl">🌍</span>
+            </div>
+            <h1 class="ml-3 text-2xl font-bold text-slate-800">GeoQuizz</h1>
+          </RouterLink>
 
-        <div class="mt-6">
-          <HelloWorld msg="You did it!" />
+          <!-- Navigation -->
+          <div class="flex items-center space-x-8">
+            <RouterLink
+              v-for="item in menuItems"
+              :key="item.path"
+              :to="item.path"
+              v-show="!item.requiresAuth || (item.requiresAuth && isLoggedIn)"
+              class="px-4 py-2 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors font-medium"
+              :class="{ 'bg-slate-100 text-slate-900': $route.path === item.path }">
+              {{ item.name }}
+            </RouterLink>
 
-          <nav class="mt-4 space-x-4 text-center">
-            <RouterLink 
-              class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-              :class="{ 'bg-gray-100': $route.name === 'home' }"
-              to="/"
+            <!-- Bouton Connexion/Déconnexion -->
+            <RouterLink
+              v-if="!isLoggedIn"
+              to="/login"
+              class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition-colors font-medium"
             >
-              Home
+              Connexion
             </RouterLink>
-            <RouterLink 
-              class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-              :class="{ 'bg-gray-100': $route.name === 'about' }"
-              to="/about"
+            <button
+              v-else
+              @click="isLoggedIn = false"
+              class="px-4 py-2 rounded-md bg-slate-600 text-white hover:bg-slate-700 transition-colors font-medium"
             >
-              About
-            </RouterLink>
-          </nav>
-        </div>
+              Déconnexion
+            </button>
+          </div>
+        </nav>
       </div>
     </header>
 
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <!-- Contenu principal -->
+    <main class="w-full mx-auto py-16">
       <RouterView />
     </main>
   </div>
 </template>
-
-<style>
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-
-  nav a:first-of-type {
-    border: 0;
-  }
-}
-</style>
