@@ -134,7 +134,7 @@ services:
     ports:
       - '6084:80'
     volumes:
-      - .back/app.mail:/var/php
+      - ./back/app-mail:/var/php
     working_dir: /var/php
     networks:
       - geoquizz-network
