@@ -1,4 +1,5 @@
 <?php
+
 namespace geoquizz\application\actions;
 
 use geoquizz\core\services\games\ServiceGameInterface;
@@ -6,7 +7,8 @@ use geoquizz\core\services\games\ServiceNotFoundException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class GetGameAction extends AbstractAction {
+class GetGameAction extends AbstractAction
+{
 
     private ServiceGameInterface $serviceGame;
 
@@ -15,7 +17,8 @@ class GetGameAction extends AbstractAction {
         $this->serviceGame = $serviceGame;
     }
 
-    public function __invoke(ServerRequestInterface $rq, ResponseInterface $rs, array $args): ResponseInterface {
+    public function __invoke(ServerRequestInterface $rq, ResponseInterface $rs, array $args): ResponseInterface
+    {
         try {
             $gameDTO = $this->serviceGame->getGame($args['id']);
 
@@ -26,9 +29,10 @@ class GetGameAction extends AbstractAction {
                     'status' => $gameDTO->status,
                     'score' => $gameDTO->score,
                     'creator_id' => $gameDTO->creatorId,
-                    'serie_id' => $gameDTO->serieId,                    
+                    'serie_id' => $gameDTO->serieId,
                     'created_at' => $gameDTO->created_at->format('d-m-Y H:i'),
-                    'photos' => $gameDTO->getPhotos(),
+                    'nbPhotos' => count($gameDTO->getPhotos()),
+                    'photos' => $gameDTO->getPhotos()                    
                 ],
             ];
 
