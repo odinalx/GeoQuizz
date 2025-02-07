@@ -29,7 +29,9 @@ GeoQuizz est un jeu web inspiré de **GeoGuessr**, où les joueurs doivent place
 ```bash
 docker-compose up -d --build
 ```
+
 ## **Sauvegarder les dumps des deux bases de données**
+
 ```bash
 docker exec -t db-auth-geoquizz pg_dump -U root -d authdb --data-only --column-inserts > back/app-auth/sql/3-data.sql
 docker exec -t db-games-geoquizz pg_dump -U root -d gamesdb --data-only --column-inserts > back/app-games/sql/3-data.sql
@@ -37,17 +39,20 @@ docker exec -t db-games-geoquizz pg_dump -U root -d gamesdb --data-only --column
 ```
 
 ### **Sauvergarder un dump de la bd Directus si on fait des changements dedans**
+
 ```bash
 cd back/app-directus/data
 docker exec -t db-directus-geoquizz pg_dump -U root -d directusdb > data.sql
 ```
 
 ### **Configuration des hosts pour tester en local**
+
 Ajout des domaines dans le fichier hosts local :
+
 - Sur Windows, le fichier se trouve dans C:\Windows\System32\drivers\etc\hosts
 - Sous Linux, le fichier se trouve dans  /etc/hosts
 
-```
+```http
 127.0.0.1 gateway.geoquizz
 127.0.0.1 api.auth
 127.0.0.1 api.games
@@ -62,13 +67,17 @@ Ajout des domaines dans le fichier hosts local :
 - **Service Email** : 
 
 ### **Routes**
+
 #### **Games**
+
 - Créer une partie -> **POST /games** avec Header "Authorization Bearer *token*" | Body : *creatorId* et *serieId*
 - Récupérer une partie -> **GET /games/{id}** avec Header "Authorization Bearer *token*" et avec Header "X-Game-Token *token*"
 - Lancer une partie -> **PATCH /games/{id}/start** avec Header "Authorization Bearer *token*" et avec Header "X-Game-Token *token*"
 - Terminer une partie -> **PATCH /games/{id}/finish** avec Header "Authorization Bearer *token*" et avec Header "X-Game-Token *token*"
 - Jouer un coup -> **POST /games/{id}** avec Header "Authorization Bearer *token*" et avec Header "X-Game-Token *token*" | Body : *photoid*, *lat*, *long*, *time*
+
 #### **Authentification**
+
 - Enregistrer un utilisateur -> **POST /auth/register** | Body : *email*, *password*, *role*
 - Se connecter -> **POST /auth/login** | Body : *email*, *password*
 - Refresh un token -> **POST /auth/refresh** | Body : *refershToken*
