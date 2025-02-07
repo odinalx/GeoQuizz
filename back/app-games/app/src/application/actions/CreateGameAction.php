@@ -32,6 +32,7 @@ class CreateGameAction extends AbstractAction
             );
 
             $gameDTO = $this->serviceGame->createGame($inputGame);
+            $jwt = $this->serviceGame->createGameToken($gameDTO->id);
 
             $responseData = [
                 'success' => true,
@@ -39,6 +40,7 @@ class CreateGameAction extends AbstractAction
                     'self' => '/games/' . $gameDTO->id,
                     'game_id' => $gameDTO->id,
                     'status' => $gameDTO->status,
+                    'gameToken' => $jwt,
                 ],
             ];
 

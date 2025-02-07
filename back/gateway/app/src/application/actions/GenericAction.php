@@ -1,7 +1,7 @@
 <?php
+
 namespace gateway\application\actions;
 
-use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use GuzzleHttp\ClientInterface;
@@ -16,13 +16,15 @@ class GenericAction extends AbstractAction
     private ClientInterface $gameClient;
     private ClientInterface $directusClient;
 
-    public function __construct(ClientInterface $authClient, ClientInterface $gameClient,ClientInterface $directusClient) {
+    public function __construct(ClientInterface $authClient, ClientInterface $gameClient, ClientInterface $directusClient)
+    {
         $this->authClient = $authClient;
         $this->gameClient = $gameClient;
         $this->directusClient = $directusClient;
     }
 
-    public function __invoke(ServerRequestInterface $rq, ResponseInterface $rs, array $args): ResponseInterface {
+    public function __invoke(ServerRequestInterface $rq, ResponseInterface $rs, array $args): ResponseInterface
+    {
         $method = $rq->getMethod();
         $path = $rq->getUri()->getPath();
         $body = $rq->getBody()->getContents();
@@ -46,16 +48,16 @@ class GenericAction extends AbstractAction
 
             $rs->getBody()->write($response->getBody()->getContents());
             return $rs->withHeader('Content-Type', 'application/json')
-                      ->withStatus($response->getStatusCode());
-
-        } catch (ClientException $e) {
+                ->withStatus($response->getStatusCode());
+        } catch (ClientException | ServerException $e) {
             return $this->handleClientException($rs, $e);
-        } catch (ServerException $e) {
-            return $this->handleClientException($rs, $e);
+        } catch (\Exception $e) {
+            return $this->respondWithError($rs, "Erreur interne du serveur : " . $e->getMessage(), 500);
         }
     }
 
-    private function handleClientException(ResponseInterface $rs, BadResponseException $e): ResponseInterface {
+    private function handleClientException(ResponseInterface $rs, BadResponseException $e): ResponseInterface
+    {
         $statusCode = $e->getResponse()->getStatusCode();
         $errorBody = $e->getResponse()->getBody()->getContents();
         $errorData = json_decode($errorBody, true);
@@ -71,7 +73,7 @@ class GenericAction extends AbstractAction
             case 403:
                 return $this->respondWithError($rs, "Accès interdit : $errorMessage", 403);
             case 404:
-                return $this->respondWithError($rs, "Ressource non trouvée : $errorMessage" , 404);
+                return $this->respondWithError($rs, "Ressource non trouvée : $errorMessage", 404);
             case 409:
                 return $this->respondWithError($rs, "Conflit : $errorMessage", 409);
             case 500:

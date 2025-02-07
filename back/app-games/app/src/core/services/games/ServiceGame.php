@@ -12,6 +12,7 @@ use geoquizz\infrastructure\PDO\RepositoryCreationErrorException;
 use geoquizz\infrastructure\PDO\GameNotFoundException;
 use geoquizz\infrastructure\PDO\GameStatusException;
 use geoquizz\core\domain\entities\photos\Photo;
+use app\providers\JWTManager;
 
 class ServiceGame implements ServiceGameInterface
 {
@@ -156,6 +157,15 @@ class ServiceGame implements ServiceGameInterface
         } catch (\Exception $e) {
             throw new \Exception("Impossible de jouer: " . $e->getMessage());
         }
+    }
+
+    public function createGameToken(string $gameid): string
+    {
+        $jwt = new JWTManager();
+        return $jwt->createAccessToken([
+            'sub' => $gameid,
+            'exp' => time() + 3600, // Access token valable 1 heure
+        ]);
     }
 
     private function calculateDistance(string $photoLat, string $photoLong, string $lat, string $long): float

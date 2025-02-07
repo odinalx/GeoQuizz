@@ -58,11 +58,11 @@ class JWTManager {
             // Convertir en tableau pour une utilisation plus facile
             return (array) $decoded;
         } catch (ExpiredException $e) {
-            throw new \Exception('Token expiré');
+            throw new \Exception('Token de partie expiré');
         } catch (SignatureInvalidException $e) {
-            throw new \Exception('Signature du token invalide');
+            throw new \Exception('Signature du token de partie invalide');
         } catch (\Exception $e) {
-            throw new \Exception('Token invalide : ' . $e->getMessage());
+            throw new \Exception('Token de partie invalide : ' . $e->getMessage());
         }
     }    
     

@@ -9,6 +9,7 @@ use geoquizz\application\actions\GetGameAction;
 use geoquizz\application\actions\StartGameAction;
 use geoquizz\application\actions\FinishGameAction;
 use geoquizz\application\actions\PlayAction;
+use app\middlewares\GameTokenMiddleware;
 
 return function(App $app): App {
 
@@ -17,10 +18,13 @@ return function(App $app): App {
 
 
     $app->post('/games', CreateGameAction::class)->setName('createGame');
-    $app->get('/games/{id}', GetGameAction::class)->setName('getGame');
-    $app->patch('/games/{id}/start', StartGameAction::class)->setName('startGame');
-    $app->patch('/games/{id}/finish', FinishGameAction::class)->setName('finishGame');
-    $app->post('/games/{id}/play', PlayAction::class)->setName('play');
+
+    $app->group('/games/{id}', function ($group) {
+        $group->get('', GetGameAction::class)->setName('getGame');
+        $group->patch('/start', StartGameAction::class)->setName('startGame');
+        $group->patch('/finish', FinishGameAction::class)->setName('finishGame');
+        $group->post('/play', PlayAction::class)->setName('play');
+    })->add(GameTokenMiddleware::class);
                                                             
     $app->options('/{routes:.+}', function (Request $request, Response $response) {
         return $response;
