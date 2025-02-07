@@ -42,15 +42,40 @@ cd back/app-directus/data
 docker exec -t db-directus-geoquizz pg_dump -U root -d directusdb > data.sql
 ```
 
+### **Configuration des hosts pour tester en local**
+Ajout des domaines dans le fichier hosts local :
+- Sur Windows, le fichier se trouve dans C:\Windows\System32\drivers\etc\hosts
+- Sous Linux, le fichier se trouve dans  /etc/hosts
+
+```
+127.0.0.1 gateway.geoquizz
+127.0.0.1 api.auth
+127.0.0.1 api.games
+127.0.0.1 api.directus
+```
+
 ### **Accéder aux services**
 
-- **Frontend** : [http://localhost:5173](http://localhost:5173)
-- **API REST GeoQuizz** : [http://localhost:8082](http://localhost:8082)
-- **Backoffice Directus** : [http://localhost:8055](http://localhost:8055)
+- **Frontend** : [http://localhost:33555](http://localhost:33555)
+- **API REST GeoQuizz** : [http://localhost:33554](http://localhost:33554) | [http://gateway.geoquizz:33554](http://gateway.geoquizz:33554)
+- **Backoffice GeoQuizz** : [http://localhost:33556](http://localhost:33556) | [http://api.directus:33556](http://api.directus:33556)
+- **Service Email** : 
+
+### **Routes**
+#### **Games**
+- Créer une partie -> **POST /games** avec Header "Authorization Bearer *token*" | Body : *creatorId* et *serieId*
+- Récupérer une partie -> **GET /games/{id}** avec Header "Authorization Bearer *token*" et avec Header "X-Game-Token *token*"
+- Lancer une partie -> **PATCH /games/{id}/start** avec Header "Authorization Bearer *token*" et avec Header "X-Game-Token *token*"
+- Terminer une partie -> **PATCH /games/{id}/finish** avec Header "Authorization Bearer *token*" et avec Header "X-Game-Token *token*"
+- Jouer un coup -> **POST /games/{id}** avec Header "Authorization Bearer *token*" et avec Header "X-Game-Token *token*" | Body : *photoid*, *lat*, *long*, *time*
+#### **Authentification**
+- Enregistrer un utilisateur -> **POST /auth/register** | Body : *email*, *password*, *role*
+- Se connecter -> **POST /auth/login** | Body : *email*, *password*
+- Refresh un token -> **POST /auth/refresh** | Body : *refershToken*
+- Valider un token -> **POST /tokens/validate** avec Header "Authorization Bearer *token*"
 
 ## 👥 Collaborateurs
 
 - **Alexandre Odin**
 - **Georges Victor**
-- **Muñoz Ramírez José Guadalupe**
 - **Martinez Ortuño Galo Eduardo**
