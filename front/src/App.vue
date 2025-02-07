@@ -6,9 +6,9 @@ import { ref } from 'vue'
 const isLoggedIn = ref(false)
 
 const menuItems = [
-  { name: 'Parties publiques', path: 'home', requiresAuth: false },
-  { name: 'Jouer', path: 'game', requiresAuth: false },
-  { name: 'Profile', path: 'profile', requiresAuth: true }
+  { name: 'Parties publiques', path: '/home', requiresAuth: false },
+  { name: 'Jouer', path: '/game', requiresAuth: false },
+  { name: 'Profile', path: '/profile', requiresAuth: true }
 ]
 </script>
 
@@ -25,29 +25,28 @@ const menuItems = [
             </div>
             <h1 class="ml-3 text-2xl font-bold text-slate-800">GeoQuizz</h1>
           </RouterLink>
-          
+
           <!-- Navigation -->
           <div class="flex items-center space-x-8">
-            <RouterLink 
+            <RouterLink
               v-for="item in menuItems"
               :key="item.path"
               :to="item.path"
               v-show="!item.requiresAuth || (item.requiresAuth && isLoggedIn)"
               class="px-4 py-2 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors font-medium"
-              :class="{ 'bg-slate-100 text-slate-900': $route.path.includes(item.path) }"
-            >
+              :class="{ 'bg-slate-100 text-slate-900': $route.path === item.path }">
               {{ item.name }}
             </RouterLink>
 
             <!-- Bouton Connexion/Déconnexion -->
-            <RouterLink 
+            <RouterLink
               v-if="!isLoggedIn"
               to="/login"
               class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition-colors font-medium"
             >
               Connexion
             </RouterLink>
-            <button 
+            <button
               v-else
               @click="isLoggedIn = false"
               class="px-4 py-2 rounded-md bg-slate-600 text-white hover:bg-slate-700 transition-colors font-medium"
