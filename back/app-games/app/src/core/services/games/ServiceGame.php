@@ -57,8 +57,9 @@ class ServiceGame implements ServiceGameInterface
                     $photoData['name'],
                     $photoData['lat'],
                     $photoData['long'],
-                    $photoData['url'],
+                    $photoData['file'],
                     $photoData['link']
+                    
                 );
                 $photo->setID($photoData['id']);
 

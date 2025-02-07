@@ -32,7 +32,7 @@ class GameDTO extends DTO {
                 'name' => $photo->name,
                 'lat' => $photo->lat,
                 'long' => $photo->long,
-                'url' => $photo->url,
+                'file' => $photo->file,
                 'link' => $photo->link
             ];
         }

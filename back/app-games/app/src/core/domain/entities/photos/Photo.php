@@ -9,15 +9,15 @@ class Photo extends Entity {
     protected string $name;
     protected string $lat;
     protected string $long;
-    protected string $url;
+    protected string $file;
     protected string $link;
 
-    public function __construct(string $serie_id, string $name, string $lat, string $long, string $url, string $link){
+    public function __construct(string $serie_id, string $name, string $lat, string $long, string $file, string $link){
         $this->serie_id = $serie_id;
         $this->name = $name;
         $this->lat = $lat;
         $this->long = $long;
-        $this->url = $url;
+        $this->file = $file;
         $this->link = $link;
     }
 
