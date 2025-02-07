@@ -52,7 +52,7 @@ Ajout des domaines dans le fichier hosts local :
 - Sur Windows, le fichier se trouve dans C:\Windows\System32\drivers\etc\hosts
 - Sous Linux, le fichier se trouve dans  /etc/hosts
 
-```http
+```
 127.0.0.1 gateway.geoquizz
 127.0.0.1 api.auth
 127.0.0.1 api.games
