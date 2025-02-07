@@ -6,11 +6,13 @@ use Psr\Http\Message\ResponseInterface;
 use geoquizz\core\services\games\ServiceGameInterface;
 use geoquizz\core\services\games\ServiceNotFoundException;
 use geoquizz\core\services\games\GameAlreadyStartException;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class FinishGameAction extends AbstractAction {
     private ServiceGameInterface $serviceGame;
 
-    public function __construct(ServiceGameInterface $serviceGame)
+    public function __construct(ServiceGameInterface $serviceGame, AMQPStreamConnection $amqpConnection)
     {
         $this->serviceGame = $serviceGame;
     }

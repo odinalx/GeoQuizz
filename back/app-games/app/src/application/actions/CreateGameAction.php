@@ -7,12 +7,14 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use geoquizz\core\dto\InputGameDTO;
 use geoquizz\core\services\games\ServiceCreationErrorException;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class CreateGameAction extends AbstractAction
 {
     private ServiceGameInterface $serviceGame;
 
-    public function __construct(ServiceGameInterface $serviceGame)
+    public function __construct(ServiceGameInterface $serviceGame, AMQPStreamConnection $amqpConnection)
     {
         $this->serviceGame = $serviceGame;
     }

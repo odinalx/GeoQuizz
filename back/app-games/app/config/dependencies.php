@@ -8,6 +8,9 @@ use geoquizz\core\services\games\ServiceGame;
 use geoquizz\core\repositoryInterfaces\PhotosRepositoryInterface;
 use geoquizz\infrastructure\adapter\PhotosRepositoryAdapter;
 use GuzzleHttp\Client;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
+
 return [
     
     'games.pdo' => function (ContainerInterface $container) {
@@ -26,6 +29,20 @@ return [
         ]);
     },
 
+    'rabbitmq' => function(ContainerInterface $container){
+        $exchange_name = 'jeux';
+        $queue_name = 'jeux_notifications';
+        $routing_key = 'routing';
+        $connection = new AMQPStreamConnection('rabbitmq', 5672, 'admin', 'admin');
+        $channel = $connection->channel();
+        $channel->exchange_declare($exchange_name, 'direct', false, true, false);
+        $channel->queue_declare($queue_name, false, true, false, false);
+        $channel->queue_bind($queue_name, $exchange_name, $routing_key);
+        return $connection; 
+    },
+
+
+
     PhotosRepositoryInterface::class => function (ContainerInterface $container) {
         $client = $container->get('directusClient');
         return new PhotosRepositoryAdapter($client);
@@ -33,13 +50,15 @@ return [
 
     GameRepositoryInterface::class => function (ContainerInterface $container) {
         $pdo = $container->get('games.pdo');
-        return new PdoGameRepository($pdo);
+        $rabbitmq=$container->get('rabbitmq');
+        return new PdoGameRepository($pdo, $rabbitmq);
     },
 
     ServiceGameInterface::class => function (ContainerInterface $container) {
         $gameRepository = $container->get(GameRepositoryInterface::class);
         $photosRepository = $container->get(PhotosRepositoryInterface::class);
-        return new ServiceGame($gameRepository, $photosRepository);
+        $rabbitmq=$container->get('rabbitmq');
+        return new ServiceGame($gameRepository, $photosRepository, $rabbitmq);
     },
     
 ];

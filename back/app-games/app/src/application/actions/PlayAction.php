@@ -5,12 +5,14 @@ namespace geoquizz\application\actions;
 use geoquizz\core\services\games\ServiceGameInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class PlayAction extends AbstractAction
 {
     private ServiceGameInterface $serviceGame;
 
-    public function __construct(ServiceGameInterface $serviceGame)
+    public function __construct(ServiceGameInterface $serviceGame,  AMQPStreamConnection $amqpConnection)
     {
         $this->serviceGame = $serviceGame;
     }
