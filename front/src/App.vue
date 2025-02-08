@@ -1,9 +1,19 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import { ref } from 'vue'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { onMounted } from 'vue'
+import { useAuthStore } from '@/stores/authStore'
 
-// À remplacer plus tard par le vrai state de l'authentification
-const isLoggedIn = ref(false)
+const router = useRouter()
+const authStore = useAuthStore()
+
+onMounted(() => {
+  authStore.initializeFromStorage()
+})
+
+const handleLogout = () => {
+  authStore.logout()
+  router.push('/')
+}
 
 const menuItems = [
   { name: 'Parties publiques', path: '/home', requiresAuth: false },
@@ -32,7 +42,7 @@ const menuItems = [
               v-for="item in menuItems"
               :key="item.path"
               :to="item.path"
-              v-show="!item.requiresAuth || (item.requiresAuth && isLoggedIn)"
+              v-show="!item.requiresAuth || (item.requiresAuth && authStore.isLoggedIn)"
               class="px-4 py-2 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors font-medium"
               :class="{ 'bg-slate-100 text-slate-900': $route.path === item.path }">
               {{ item.name }}
@@ -40,7 +50,7 @@ const menuItems = [
 
             <!-- Bouton Connexion/Déconnexion -->
             <RouterLink
-              v-if="!isLoggedIn"
+              v-if="!authStore.isLoggedIn"
               to="/login"
               class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition-colors font-medium"
             >
@@ -48,7 +58,7 @@ const menuItems = [
             </RouterLink>
             <button
               v-else
-              @click="isLoggedIn = false"
+              @click="handleLogout"
               class="px-4 py-2 rounded-md bg-slate-600 text-white hover:bg-slate-700 transition-colors font-medium"
             >
               Déconnexion

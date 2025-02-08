@@ -1,9 +1,11 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authStore'
 import BaseButton from '@/components/UI/BaseButton.vue'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 const props = defineProps({
   isLogin: {
@@ -66,9 +68,19 @@ const handleSubmit = async () => {
     isLoading.value = true
     error.value = ''
 
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    console.log('Form submitted:', formData.value)
-    
+    if (isLogin.value) {
+      await authStore.login({
+        email: formData.value.email,
+        password: formData.value.password
+      })
+    } else {
+      await authStore.register({
+        email: formData.value.email,
+        password: formData.value.password
+      })
+    }
+
+    router.push('/home')
   } catch (err) {
     error.value = err.message || "Une erreur s'est produite"
   } finally {

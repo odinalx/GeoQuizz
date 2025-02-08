@@ -10,10 +10,11 @@ GeoQuizz est un jeu web inspiré de **GeoGuessr**, où les joueurs doivent place
 
 | Service                 | Port |
 |-------------------------|------|
-| Application frontend (Vue.js) | **5173** |
-| API REST GeoQuizz (PHP/Slim) | **8082** |
-| Service WebSocket | **8083** |
-| Backoffice GeoQuizz (Directus) | **8055** |
+| Application frontend (Vue.js) | **33555** |
+| Gateway API | **33554** |
+| Auth API | **33550** |
+| Games API | **33552** |
+| Directus API | **33556** |
 
 ## 🛠️ Installation et exécution du projet
 
