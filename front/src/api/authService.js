@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:33554'
+const API_URL = 'http://gateway.geoquizz:33554'
 
 export const authService = {
   async register(userData) {
@@ -39,7 +39,9 @@ export const authService = {
       throw new Error(error.message || 'Email ou mot de passe incorrect')
     }
 
-    return await response.json()
+    const data = await response.json()
+    console.log('Login response:', data)
+    return data
   },
 
   async refreshToken(refreshToken) {
@@ -56,7 +58,9 @@ export const authService = {
       throw new Error(error.message || 'Erreur lors du rafraîchissement du token')
     }
 
-    return await response.json()
+    const data = await response.json()
+    console.log('Refresh response:', data)
+    return data
   },
 
   async validateToken(token) {
@@ -67,6 +71,8 @@ export const authService = {
       }
     })
 
+    const data = await response.json()
+    console.log('Validate response:', data)
     return response.ok
   }
 }

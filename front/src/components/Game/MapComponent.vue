@@ -27,7 +27,7 @@ const props = defineProps({
 })
 
 const zoom = ref(13)
-const center = ref([48.8566, 2.3522])
+const center = ref([48.6921, 6.1844])
 const markerPosition = ref(null)
 const mapRef = ref(null)
 

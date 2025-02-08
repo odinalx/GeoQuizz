@@ -63,7 +63,7 @@ services:
     container_name: api-directus-geoquizz
     working_dir: /directus
     volumes:
-      - ./back/app-directus/uploads:/directus/uploads
+      - ./front/public/uploads:/directus/uploads
     env_file:
       - ./back/app-directus/directus-api.env
     depends_on:

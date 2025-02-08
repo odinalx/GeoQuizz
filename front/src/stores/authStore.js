@@ -16,16 +16,40 @@ export const useAuthStore = defineStore('auth', {
         this.error = null
         const response = await authService.login(credentials)
         
-        this.token = response.token
-        this.refreshToken = response.refreshToken
-        this.user = response.user
-        this.isLoggedIn = true
+        if (response.success && response.data) {
+          const decodedToken = this.decodeJWT(response.data.accessToken)
+          
+          this.token = response.data.accessToken
+          this.refreshToken = response.data.refreshToken
+          this.user = {
+            id: decodedToken.sub,
+            email: decodedToken.email,
+            role: decodedToken.role
+          }
+          this.isLoggedIn = true
 
-        localStorage.setItem('token', this.token)
-        localStorage.setItem('refreshToken', this.refreshToken)
+          localStorage.setItem('token', this.token)
+          localStorage.setItem('refreshToken', this.refreshToken)
+          localStorage.setItem('user', JSON.stringify(this.user))
+        }
       } catch (error) {
         this.error = error.message
         throw error
+      }
+    },
+
+    decodeJWT(token) {
+      try {
+        if (!token) return null
+        const base64Url = token.split('.')[1]
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+        }).join(''))
+        return JSON.parse(jsonPayload)
+      } catch (error) {
+        console.error('Erreur lors du décodage du token:', error)
+        return null
       }
     },
 
@@ -46,11 +70,23 @@ export const useAuthStore = defineStore('auth', {
     async refreshTokenAction() {
       try {
         const response = await authService.refreshToken(this.refreshToken)
-        this.token = response.token
-        this.refreshToken = response.refreshToken
-        
-        localStorage.setItem('token', this.token)
-        localStorage.setItem('refreshToken', this.refreshToken)
+        if (response.success && response.data) {
+          this.token = response.data.accessToken
+          this.refreshToken = response.data.refreshToken
+          
+          const decodedToken = this.decodeJWT(response.data.accessToken)
+          if (decodedToken) {
+            this.user = {
+              id: decodedToken.sub,
+              email: decodedToken.email,
+              role: decodedToken.role
+            }
+          }
+          
+          localStorage.setItem('token', this.token)
+          localStorage.setItem('refreshToken', this.refreshToken)
+          localStorage.setItem('user', JSON.stringify(this.user))
+        }
       } catch (error) {
         this.logout()
         throw error
@@ -71,6 +107,7 @@ export const useAuthStore = defineStore('auth', {
       
       localStorage.removeItem('token')
       localStorage.removeItem('refreshToken')
+      localStorage.removeItem('user')
       
       if (router) {
         router.push('/')
@@ -80,17 +117,15 @@ export const useAuthStore = defineStore('auth', {
     initializeFromStorage() {
       const token = localStorage.getItem('token')
       const refreshToken = localStorage.getItem('refreshToken')
+      const user = localStorage.getItem('user')
       
-      if (token && refreshToken) {
+      if (token && refreshToken && user) {
         this.token = token
         this.refreshToken = refreshToken
+        this.user = JSON.parse(user)
         this.isLoggedIn = true
-        this.validateToken().then(isValid => {
-          if (!isValid) {
-            this.refreshTokenAction()
-              .catch(() => this.logout())
-          }
-        })
+        
+        this.refreshTokenAction().catch(() => this.logout())
       }
     }
   }

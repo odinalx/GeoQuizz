@@ -2,48 +2,76 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import { useGameStore } from '@/stores/gameStore'
 import BaseButton from '@/components/UI/BaseButton.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
-
-// Liste simple de lieux
-const locations = [
-  { id: 1, name: 'Paris' },
-  { id: 2, name: 'New York' },
-  { id: 3, name: 'Tokyo' },
-  { id: 4, name: 'Londres' },
-  { id: 5, name: 'Berlin' },
-  { id: 6, name: 'Rome' },
-  { id: 7, name: 'France' },
-  { id: 8, name: 'Japon' },
-  { id: 9, name: 'États-Unis' },
-  { id: 10, name: 'Italie' },
-  { id: 11, name: 'Espagne' },
-  { id: 12, name: 'Allemagne' }
-]
+const gameStore = useGameStore()
 
 const selectedLocation = ref(null)
-const selectedDifficulty = ref('Facile')
+const isLoading = ref(false)
+const error = ref(null)
+
+// Une seule location : Nancy avec son UUID correct
+const locations = ref([
+  { 
+    id: '85678cf6-5977-45aa-b727-8d5c677f7e41', 
+    name: 'Nancy' 
+  }
+])
+
+// Initialiser selectedLocation avec Nancy dès le début
+selectedLocation.value = locations.value[0]
 
 const startGame = async () => {
   try {
     if (!selectedLocation.value) return
     
-    if (!authStore.isLoggedIn) {
+    if (!authStore.isLoggedIn || !authStore.user) {
       router.push('/login')
       return
     }
+
+    // Réinitialiser le state du jeu avant d'en créer un nouveau
+    gameStore.resetGame()
     
+    isLoading.value = true
+    error.value = null
+    
+    // 1. Créer la partie
+    const gameData = {
+      creatorId: authStore.user.id,
+      serieId: selectedLocation.value.id
+    }
+    
+    console.log('Creating new game with:', gameData)
+    const createResponse = await gameStore.createGame(gameData)
+    console.log('Create response:', createResponse)
+    
+    if (!createResponse.success) {
+      throw new Error('Échec de la création de la partie')
+    }
+    
+    const gameId = createResponse.data.game_id
+    if (!gameId) {
+      throw new Error('ID de partie manquant dans la réponse')
+    }
+
+    // 2. Démarrer la partie
+    const startResponse = await gameStore.startGame(gameId)
+    console.log('Start response:', startResponse)
+
+    // 3. Rediriger vers la page de jeu
     await router.push({
       name: 'game',
-      query: {
-        location: selectedLocation.value.id,
-        difficulty: selectedDifficulty.value
-      }
+      query: { id: gameId }
     })
-  } catch (error) {
-    console.error('Erreur lors du démarrage de la partie:', error)
+  } catch (err) {
+    error.value = err.message
+    console.error('Erreur lors du démarrage de la partie:', err)
+  } finally {
+    isLoading.value = false
   }
 }
 </script>
@@ -70,21 +98,6 @@ const startGame = async () => {
 
       <h1 class="text-4xl font-bold text-slate-800 text-center">Nouvelle Partie</h1>
 
-      <!-- Sélection de la difficulté centrée -->
-      <div class="pt-8 flex justify-center">
-        <div class="w-64">
-          <label class="block text-sm font-medium text-slate-700 mb-2 text-center">Difficulté</label>
-          <select 
-            v-model="selectedDifficulty"
-            class="w-full px-4 py-2 rounded-md border border-slate-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-slate-800"
-          >
-            <option>Facile</option>
-            <option>Moyen</option>
-            <option>Difficile</option>
-          </select>
-        </div>
-      </div>
-
       <!-- Liste des lieux -->
       <div class="pt-8">
         <h2 class="text-2xl font-bold pb-4 text-slate-800 text-center">Lieux</h2>
@@ -101,13 +114,28 @@ const startGame = async () => {
 
             <BaseButton 
               @click="startGame"
-              :disabled="selectedLocation?.id !== location.id"
+              :disabled="selectedLocation?.id !== location.id || isLoading"
               class="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 cursor-pointer"
             >
-              Jouer
+              <template v-if="isLoading">
+                <span class="inline-block animate-spin mr-2">⌛</span>
+                Chargement...
+              </template>
+              <template v-else>
+                Jouer
+              </template>
             </BaseButton>
           </div>
         </div>
+      </div>
+
+      <!-- Message d'erreur -->
+      <div 
+        v-if="error"
+        class="fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded"
+        role="alert"
+      >
+        <span class="block sm:inline">{{ error }}</span>
       </div>
     </div>
   </div>

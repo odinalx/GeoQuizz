@@ -20,12 +20,6 @@ import Button from '@/components/UI/Button.vue'
       >
         Commencer une partie
       </Button>
-      <Button 
-        to="/home"
-        class="bg-slate-700 hover:bg-slate-800 px-8 py-4 text-lg"
-      >
-        Voir les parties publiques
-      </Button>
     </div>
   </div>
 </template> 

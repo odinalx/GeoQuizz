@@ -1,108 +1,127 @@
 <script setup>
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import Button from '@/components/UI/Button.vue'
+import BaseButton from '@/components/UI/BaseButton.vue'
+import { useAuthStore } from '@/stores/authStore'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
-// À remplacer par les vraies données de l'API
-const publicGames = [
-  { 
-    id: 1, 
-    title: 'Découverte de Paris', 
-    difficulty: 'Facile', 
-    plays: 42,
-    topScores: [
-      { score: 4800, player: 'JohnDoe', isAnonymous: false },
-      { score: 4600, player: 'Anonymous', isAnonymous: true },
-      { score: 4400, player: 'AliceGamer', isAnonymous: false },
-      { score: 4200, player: 'Anonymous', isAnonymous: true },
-      { score: 4000, player: 'BobPlayer', isAnonymous: false },
-    ]
+// Données statiques pour les parties publiques
+const publicGames = ref([
+  {
+    id: 1,
+    score: 4850,
+    creator: {
+      username: "Victor"
+    },
+    serie: {
+      name: "Nancy",
+      difficulty: "Facile"
+    },
+    status: "FINISHED",
+    createdAt: "2024-02-08"
   },
-  { 
-    id: 2, 
-    title: 'Tokyo by Night', 
-    difficulty: 'Moyen', 
-    plays: 28,
-    topScores: [
-      { score: 4700, player: 'TokyoFan', isAnonymous: false },
-      { score: 4500, player: 'Anonymous', isAnonymous: true },
-      { score: 4300, player: 'NightRider', isAnonymous: false },
-      { score: 4100, player: 'Anonymous', isAnonymous: true },
-      { score: 3900, player: 'CityExplorer', isAnonymous: false },
-    ]
+  {
+    id: 2,
+    score: 3750,
+    creator: {
+      username: "Alexandre"
+    },
+    serie: {
+      name: "Nancy",
+      difficulty: "Moyen"
+    },
+    status: "FINISHED",
+    createdAt: "2024-02-08"
   },
-  { 
-    id: 3, 
-    title: 'New York City', 
-    difficulty: 'Difficile', 
-    plays: 35,
-    topScores: [
-      { score: 4500, player: 'NYCFan', isAnonymous: false },
-      { score: 4300, player: 'Anonymous', isAnonymous: true },
-      { score: 4100, player: 'BigApple', isAnonymous: false },
-      { score: 3900, player: 'Anonymous', isAnonymous: true },
-      { score: 3700, player: 'CityWalker', isAnonymous: false },
-    ]
+  {
+    id: 3,
+    score: 4200,
+    creator: {
+      username: "Galo"
+    },
+    serie: {
+      name: "Nancy",
+      difficulty: "Difficile"
+    },
+    status: "FINISHED",
+    createdAt: "2024-02-08"
   }
-]
+])
+
+const isLoading = ref(false)
+const error = ref(null)
+
+const startNewGame = () => {
+  if (!authStore.isLoggedIn) {
+    router.push('/login')
+    return
+  }
+  router.push('/game')
+}
 </script>
 
 <template>
   <div class="flex justify-center px-4">
     <div class="w-full max-w-7xl">
-      <h1 class="text-4xl font-bold text-slate-800 text-center">Parties Publiques</h1>
+      <div class="flex justify-between items-center mb-8">
+        <h1 class="text-4xl font-bold text-slate-800">Parties Publiques</h1>
+        <BaseButton 
+          @click="startNewGame"
+          class="bg-indigo-600 hover:bg-indigo-700 px-6 py-3"
+        >
+          Nouvelle Partie
+        </BaseButton>
+      </div>
+      
+      <div v-if="isLoading" class="text-center py-8">
+        <span class="inline-block animate-spin mr-2">⌛</span>
+        Chargement...
+      </div>
+      
+      <div v-else-if="error" class="text-center text-red-600 py-8">
+        {{ error }}
+      </div>
+      
+      <div v-else-if="publicGames.length === 0" class="text-center text-slate-600 py-8">
+        Aucune partie publique disponible
+      </div>
       
       <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div 
           v-for="game in publicGames" 
           :key="game.id" 
-          class="bg-white rounded-xl shadow-sm overflow-hidden"
+          class="bg-white rounded-xl shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
+          @click="startNewGame"
         >
-          <!-- En-tête de la carte -->
           <div class="p-6">
-            <h3 class="text-xl font-bold text-slate-800 mb-2 text-center">{{ game.title }}</h3>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-bold text-slate-800">{{ game.serie.name }}</h3>
+              <span class="px-3 py-1 text-sm font-medium rounded-full" 
+                :class="{
+                  'bg-green-100 text-green-800': game.serie.difficulty === 'Facile',
+                  'bg-yellow-100 text-yellow-800': game.serie.difficulty === 'Moyen',
+                  'bg-red-100 text-red-800': game.serie.difficulty === 'Difficile'
+                }">
+                {{ game.serie.difficulty }}
+              </span>
+            </div>
             
-            <div class="space-y-2 mb-4">
+            <div class="space-y-2">
               <div class="flex justify-between text-sm">
-                <span class="text-slate-600">Difficulté</span>
-                <span class="font-medium" :class="{
-                  'text-green-600': game.difficulty === 'Facile',
-                  'text-yellow-600': game.difficulty === 'Moyen',
-                  'text-red-600': game.difficulty === 'Difficile'
-                }">{{ game.difficulty }}</span>
+                <span class="text-slate-600">Score</span>
+                <span class="font-medium text-slate-800">{{ game.score }} pts</span>
               </div>
               
               <div class="flex justify-between text-sm">
-                <span class="text-slate-600">Parties jouées</span>
-                <span class="font-medium text-slate-800">{{ game.plays }}</span>
+                <span class="text-slate-600">Joueur</span>
+                <span class="font-medium text-slate-800">{{ game.creator.username }}</span>
               </div>
-            </div>
-
-            <Button 
-              class="w-full bg-indigo-600 hover:bg-indigo-700"
-              @click="router.push({ name: 'game', params: { gameId: game.id }})"
-            >
-              Jouer
-            </Button>
-          </div>
-
-          <!-- Classement (toujours affiché) -->
-          <div class="border-t border-slate-200 bg-slate-50 p-4">
-            <h4 class="font-semibold text-slate-800 mb-3 text-center">Top 5</h4>
-            <div class="space-y-2">
-              <div 
-                v-for="(score, index) in game.topScores" 
-                :key="index"
-                class="flex items-center justify-between text-sm py-1"
-              >
-                <div class="flex items-center gap-2">
-                  <span class="w-5 font-medium text-slate-600">{{ index + 1 }}.</span>
-                  <span :class="{ 'text-slate-500': score.isAnonymous }">
-                    {{ score.player }}
-                  </span>
-                </div>
-                <span class="font-medium text-indigo-600">{{ score.score }} pts</span>
+              
+              <div class="flex justify-between text-sm">
+                <span class="text-slate-600">Date</span>
+                <span class="font-medium text-slate-800">{{ new Date(game.createdAt).toLocaleDateString() }}</span>
               </div>
             </div>
           </div>
