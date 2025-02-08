@@ -37,8 +37,8 @@ const startGame = async () => {
     
     await router.push({
       name: 'game',
-      params: {
-        locationId: selectedLocation.value.id,
+      query: {
+        location: selectedLocation.value.id,
         difficulty: selectedDifficulty.value
       }
     })

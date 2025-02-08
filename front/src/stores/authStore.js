@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { authService } from '@/api/authService'
-import { useRouter } from 'vue-router'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -44,7 +43,7 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async refreshToken() {
+    async refreshTokenAction() {
       try {
         const response = await authService.refreshToken(this.refreshToken)
         this.token = response.token
@@ -63,9 +62,7 @@ export const useAuthStore = defineStore('auth', {
       return await authService.validateToken(this.token)
     },
 
-    logout() {
-      const router = useRouter()
-      
+    logout(router) {
       this.isLoggedIn = false
       this.user = null
       this.token = null
@@ -75,7 +72,9 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('token')
       localStorage.removeItem('refreshToken')
       
-      router.push('/')
+      if (router) {
+        router.push('/')
+      }
     },
 
     initializeFromStorage() {
@@ -88,7 +87,8 @@ export const useAuthStore = defineStore('auth', {
         this.isLoggedIn = true
         this.validateToken().then(isValid => {
           if (!isValid) {
-            this.refreshToken().catch(() => this.logout())
+            this.refreshTokenAction()
+              .catch(() => this.logout())
           }
         })
       }

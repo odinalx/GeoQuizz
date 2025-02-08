@@ -38,7 +38,8 @@ const router = createRouter({
     {
       path: '/game/play',
       name: 'game',
-      component: GameView
+      component: GameView,
+      props: true
     },
     {
       path: '/profile',

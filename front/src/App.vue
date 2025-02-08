@@ -11,8 +11,7 @@ onMounted(() => {
 })
 
 const handleLogout = () => {
-  authStore.logout()
-  router.push('/')
+  authStore.logout(router)
 }
 
 const menuItems = [
@@ -24,11 +23,9 @@ const menuItems = [
 
 <template>
   <div class="min-h-screen bg-slate-50">
-    <!-- Header avec navigation -->
     <header class="bg-white shadow-sm w-full">
       <div class="w-full mx-auto">
         <nav class="flex items-center justify-center h-20">
-          <!-- Logo et titre -->
           <RouterLink to="/" class="flex items-center mr-16">
             <div class="w-10 h-10 rounded-lg flex items-center justify-center">
               <span class="text-2xl">🌍</span>
@@ -36,7 +33,6 @@ const menuItems = [
             <h1 class="ml-3 text-2xl font-bold text-slate-800">GeoQuizz</h1>
           </RouterLink>
 
-          <!-- Navigation -->
           <div class="flex items-center space-x-8">
             <RouterLink
               v-for="item in menuItems"
@@ -48,7 +44,6 @@ const menuItems = [
               {{ item.name }}
             </RouterLink>
 
-            <!-- Bouton Connexion/Déconnexion -->
             <RouterLink
               v-if="!authStore.isLoggedIn"
               to="/login"
@@ -68,7 +63,6 @@ const menuItems = [
       </div>
     </header>
 
-    <!-- Contenu principal -->
     <main class="w-full mx-auto py-16">
       <RouterView />
     </main>
