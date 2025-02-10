@@ -1,19 +1,13 @@
-FROM node:18-alpine
-
-# Set working directory
+# Étape de build
+FROM node:lts-alpine as build-stage
 WORKDIR /app
-
-# Copy package files
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
-
-# Copy project files
 COPY . .
+RUN npm run build
 
-# Expose Vite dev server port
-EXPOSE 33555 
-
-# Start Vite dev server with host parameter
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"] 
+# Étape de production
+FROM nginx:stable-alpine as production-stage
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

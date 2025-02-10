@@ -15,18 +15,4 @@ class Cors
                              ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
         return $response;
     }
-
-    public function corsHeaders(Request $rq, RequestHandler $next): Response
-    {
-        if (! $rq->hasHeader('Origin'))
-            throw new HttpUnauthorizedException($rq, "missing Origin Header (cors)");
-        $response = $next->handle($rq);
-        $response = $response
-                ->withHeader('Access-Control-Allow-Origin',  $rq->getHeaderLine('Origin'))
-                ->withHeader('Access-Control-Allow-Methods', 'POST, PUT, GET','PATCH' )
-                ->withHeader('Access-Control-Allow-Headers', 'Authorization')
-                ->withHeader('Access-Control-Max-Age', 3600)
-                ->withHeader('Access-Control-Allow-Credentials', 'true');
-        return $response;
-    }
 }

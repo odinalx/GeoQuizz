@@ -15,10 +15,11 @@ COPY . .
 
 # Installation de Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install 
 
 # Exposition du port 80
 EXPOSE 80
 
 # Commande de démarrage
-CMD ["php", "-S", "0.0.0.0:80", "-t", "/var/app/public"]
+CMD sh -c "composer install --no-dev --optimize-autoloader && php -S 0.0.0.0:80 -t /var/app/public"
+
